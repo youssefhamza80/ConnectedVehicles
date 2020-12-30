@@ -48,7 +48,7 @@ public class VehicleStatusService {
 			vehicleStatusRepository.save(vehicleStatus);
 			return new ResponseEntity<>(vehicleStatus, HttpStatus.OK);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
 }
