@@ -1,5 +1,6 @@
 package com.youssef.altenchallenge.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.youssef.altenchallenge.entity.Vehicle;
+import com.youssef.altenchallenge.entity.VehicleStatus;
 import com.youssef.altenchallenge.repository.VehicleRepository;
 
 @Service
@@ -15,7 +17,7 @@ public class VehicleService {
 
 	private final VehicleRepository vehicleRepository;
 
-	public VehicleService(VehicleRepository vehicleRepository){
+	public VehicleService(VehicleRepository vehicleRepository) {
 		super();
 		this.vehicleRepository = vehicleRepository;
 	}
@@ -33,7 +35,7 @@ public class VehicleService {
 		}
 	}
 
-	public ResponseEntity<Vehicle> insertNewVehicle(Vehicle vehicle) {
+	public ResponseEntity<Object> insertNewVehicle(Vehicle vehicle) {
 		try {
 			ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicle.getVehicleId());
 			if (existingVehicle.getStatusCode() == HttpStatus.FOUND) {
@@ -44,16 +46,33 @@ public class VehicleService {
 			vehicleRepository.save(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
 		}
 	}
 
-	public ResponseEntity<Vehicle> updateVehicle(Vehicle vehicle) {
+	public ResponseEntity<Object> ping(String vehicleId) {
+		try {
+			Vehicle vehicle = null;
+			ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicleId);
+			if (existingVehicle.getStatusCode() == HttpStatus.FOUND && existingVehicle.getBody() != null) {
+				vehicle = existingVehicle.getBody();
+				vehicle.setPingDtm(LocalDateTime.now());
+				vehicleRepository.save(vehicle);
+				return new ResponseEntity<>(vehicle, HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception ex) {
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	public ResponseEntity<Object> updateVehicle(Vehicle vehicle) {
 		try {
 			vehicleRepository.save(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.OK);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 
