@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.youssef.altenchallenge.entity.Vehicle;
 import com.youssef.altenchallenge.service.VehicleService;
 
 @RestController
+@RequestMapping("/vehicle")
 public class VehicleController {
 
 	private final VehicleService vehicleService;
@@ -38,7 +40,7 @@ public class VehicleController {
 		return vehicleService.insertNewVehicle(vehicle);
 	}
 
-	@DeleteMapping("/delete/{vehicleId}")
+	@DeleteMapping("/{vehicleId}")
 	public ResponseEntity<Void> deleteVehicle(@PathVariable String vehicleId) {
 		return vehicleService.deleteVehicle(vehicleId);
 	}
