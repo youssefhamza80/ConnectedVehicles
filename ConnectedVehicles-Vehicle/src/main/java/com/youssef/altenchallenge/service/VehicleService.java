@@ -8,8 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.youssef.altenchallenge.entity.Customer;
+import com.youssef.altenchallenge.client.CustomerClient;
 import com.youssef.altenchallenge.entity.Vehicle;
-import com.youssef.altenchallenge.entity.VehicleStatus;
 import com.youssef.altenchallenge.repository.VehicleRepository;
 
 @Service
@@ -17,9 +18,12 @@ public class VehicleService {
 
 	private final VehicleRepository vehicleRepository;
 
-	public VehicleService(VehicleRepository vehicleRepository) {
+	private final CustomerClient customerClient;
+
+	public VehicleService(VehicleRepository vehicleRepository, CustomerClient customerClient) {
 		super();
 		this.vehicleRepository = vehicleRepository;
+		this.customerClient = customerClient;
 	}
 
 	public List<Vehicle> findAll() {
@@ -27,9 +31,9 @@ public class VehicleService {
 	}
 
 	public ResponseEntity<Vehicle> findByVehicleId(String vehicleId) {
-		Optional<Vehicle> customer = vehicleRepository.findById(vehicleId);
-		if (customer.isPresent()) {
-			return new ResponseEntity<>(customer.get(), HttpStatus.FOUND);
+		Optional<Vehicle> vehicle = vehicleRepository.findById(vehicleId);
+		if (vehicle.isPresent()) {
+			return new ResponseEntity<>(vehicle.get(), HttpStatus.FOUND);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
@@ -43,10 +47,18 @@ public class VehicleService {
 						String.format("Vehicle with VIN '%s'  and Registration No. '%s' already exists",
 								vehicle.getVehicleId(), vehicle.getRegNo()));
 			}
+
+			// Check if customer exists
+			ResponseEntity<Customer> foundCustomer = customerClient.findCustomer(vehicle.getCustomerId());
+
+			if (foundCustomer == null || foundCustomer.getStatusCode() != HttpStatus.FOUND) {
+				throw new IllegalArgumentException(
+						String.format("Customer id: %d does not exist", vehicle.getCustomerId()));
+			}
 			vehicleRepository.save(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -83,5 +95,21 @@ public class VehicleService {
 		} catch (Exception ex) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+	}
+
+	public ResponseEntity<String> getVehicleConnectionStatus(String vehicleId) {
+		ResponseEntity<Vehicle> vehicleResponse = findByVehicleId(vehicleId);
+		if (vehicleResponse.getStatusCode() == HttpStatus.FOUND) {
+			Vehicle vehicle = vehicleResponse.getBody();
+			if (vehicle != null) {
+				LocalDateTime pingDtm = vehicle.getPingDtm();
+
+				if (pingDtm != null && LocalDateTime.now().minusMinutes(1).compareTo(pingDtm) <= 0) {
+					return new ResponseEntity<>("CONNECTED", HttpStatus.OK);
+				}
+			}
+		}
+
+		return new ResponseEntity<>("NOT CONNECTED", HttpStatus.OK);
 	}
 }

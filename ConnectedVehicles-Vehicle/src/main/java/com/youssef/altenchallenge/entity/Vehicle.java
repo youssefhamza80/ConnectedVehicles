@@ -20,7 +20,7 @@ public class Vehicle {
 	private String regNo;
 
 	private LocalDateTime pingDtm;
-
+	
 	public long getCustomerId() {
 		return customerId;
 	}

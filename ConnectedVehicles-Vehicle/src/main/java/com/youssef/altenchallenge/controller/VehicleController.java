@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.youssef.altenchallenge.entity.Vehicle;
-import com.youssef.altenchallenge.entity.VehicleStatus;
 import com.youssef.altenchallenge.service.VehicleService;
 
 @RestController
@@ -39,6 +38,11 @@ public class VehicleController {
 	public ResponseEntity<Object> ping(@PathVariable String vehicleId) {
 		return vehicleService.ping(vehicleId);
 	}
+	
+	@GetMapping("/connectionstatus/{vehicleId}")
+	public ResponseEntity<String> getVehicleConnectionStatus(@PathVariable String vehicleId) {
+		return vehicleService.getVehicleConnectionStatus(vehicleId);
+	}
 
 	@PostMapping
 	public ResponseEntity<Object> insertVehicle(@RequestBody Vehicle vehicle) {
@@ -49,4 +53,6 @@ public class VehicleController {
 	public ResponseEntity<Void> deleteVehicle(@PathVariable String vehicleId) {
 		return vehicleService.deleteVehicle(vehicleId);
 	}
+	
+	
 }
