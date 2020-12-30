@@ -10,6 +10,7 @@ local.properties
 .loadpath
 .recommenders
 */target/*
+*/.metadata/*
 
 # External tool builders
 .externalToolBuilders/
