@@ -7,9 +7,7 @@
 		<artifactId>connectedvehicles-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>		
 	</parent>
-	<groupId>com.youssef.altenchallenge</groupId>
 	<artifactId>ConnectedVehicles-APIGateway</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>ConnectedVehicles-APIGateway</name>
 	<description>API Gateway Service for ConnectedVehicles Alten Challenge</description>
 

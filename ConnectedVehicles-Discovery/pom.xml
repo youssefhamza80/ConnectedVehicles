@@ -8,9 +8,7 @@
 		<artifactId>connectedvehicles-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>		
 	</parent>
-	<groupId>com.youssef.altenchallenge</groupId>
 	<artifactId>ConnectedVehicles-Discovery</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>ConnectedVehicles-Discovery</name>
 	<description>Discovery Service for ConnectedVehicles Alten Challenge</description>
 

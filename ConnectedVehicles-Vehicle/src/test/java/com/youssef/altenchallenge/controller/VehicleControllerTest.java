@@ -170,7 +170,7 @@ public class VehicleControllerTest {
 	}
 
 	@Test
-	public void whenDeleteExistingConnectedVehicleStatus_thenStatusIsOKAndStatusIsConnected() {
+	public void whenGetExistingConnectedVehicleStatus_thenStatusIsOKAndStatusIsConnected() {
 		ResponseEntity<String> responseEntity = new ResponseEntity<String>("CONNECTED", HttpStatus.OK);
 		when(vehicleService.getVehicleConnectionStatus(any())).thenReturn(responseEntity);
 

@@ -62,7 +62,7 @@ public class VehicleService {
 						String.format("Customer id: %d does not exist", vehicle.getCustomerId()));
 			}
 			vehicleRepository.save(vehicle);
-			return new ResponseEntity<>(vehicle, HttpStatus.OK);
+			return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
 		} catch (FeignException feignEx) {
 			return new ResponseEntity<>("Error while retrieving customer data." + feignEx.getMessage(),
 					HttpStatus.BAD_REQUEST);
@@ -103,10 +103,15 @@ public class VehicleService {
 
 	public ResponseEntity<String> deleteVehicle(String vehicleId) {
 		try {
-			vehicleRepository.deleteById(vehicleId);
-			return new ResponseEntity<>(HttpStatus.OK);
+			ResponseEntity<Vehicle> vehicleResponse = findByVehicleId(vehicleId);
+			if (vehicleResponse.getStatusCode() == HttpStatus.OK && vehicleResponse.getBody() != null) {
+				vehicleRepository.deleteById(vehicleId);
+				return new ResponseEntity<>(HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -116,7 +121,6 @@ public class VehicleService {
 			Vehicle vehicle = vehicleResponse.getBody();
 			if (vehicle != null) {
 				LocalDateTime pingDtm = vehicle.getPingDtm();
-
 				if (pingDtm != null && LocalDateTime.now().minusMinutes(configProperties.getConnectionTimeoutMinutes())
 						.compareTo(pingDtm) <= 0) {
 					return new ResponseEntity<>("CONNECTED", HttpStatus.OK);
