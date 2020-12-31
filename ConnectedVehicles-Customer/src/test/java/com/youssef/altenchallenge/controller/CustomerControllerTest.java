@@ -1,7 +1,7 @@
 package com.youssef.altenchallenge.controller;
 
-import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.delete;
+import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -101,8 +100,7 @@ public class CustomerControllerTest {
 	}
 
 	@Test
-	public void whenUpdatingExistingCustomer_thenStatusIsOk() {
-
+	public void whenUpdatingExistingCustomer_thenStatusIsOK() {
 		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		when(customerService.updateCustomer(any(Customer.class))).thenReturn(responseEntity);
 		Map<String, String> request = new HashMap<>();
@@ -114,18 +112,18 @@ public class CustomerControllerTest {
 
 	@Test
 	public void whenUpdatingNonExistingCustomer_thenStatusIsNotFound() {
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.NOT_FOUND);
 		when(customerService.updateCustomer(any(Customer.class))).thenReturn(responseEntity);
 		Map<String, String> request = new HashMap<>();
 		request.put("name", "Youssef");
 		request.put("address", "Doha Qatar");
 		
 		given().contentType("application/json").body(request).when().put(uri).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value());
+				.statusCode(HttpStatus.NOT_FOUND.value());
 	}
 
 	@Test
-	public void whenDeletingExistingCustomer_thenStatusIsOk() {
+	public void whenDeletingExistingCustomer_thenStatusIsOK() {
 
 		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		when(customerService.deleteCustomer(1)).thenReturn(responseEntity);

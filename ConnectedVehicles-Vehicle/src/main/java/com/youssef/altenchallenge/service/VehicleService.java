@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.youssef.altenchallenge.entity.Customer;
 import com.youssef.altenchallenge.client.CustomerClient;
+import com.youssef.altenchallenge.configuration.ConfigProperties;
 import com.youssef.altenchallenge.entity.Vehicle;
 import com.youssef.altenchallenge.repository.VehicleRepository;
 
@@ -22,10 +23,14 @@ public class VehicleService {
 
 	private final CustomerClient customerClient;
 
-	public VehicleService(VehicleRepository vehicleRepository, CustomerClient customerClient) {
+	private final ConfigProperties configProperties;
+
+	public VehicleService(VehicleRepository vehicleRepository, CustomerClient customerClient,
+			ConfigProperties configProperties) {
 		super();
 		this.vehicleRepository = vehicleRepository;
 		this.customerClient = customerClient;
+		this.configProperties = configProperties;
 	}
 
 	public List<Vehicle> findAll() {
@@ -46,8 +51,7 @@ public class VehicleService {
 			ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicle.getVehicleId());
 			if (existingVehicle.getStatusCode() == HttpStatus.OK) {
 				throw new IllegalArgumentException(
-						String.format("Vehicle with VIN '%s'  and Registration No. '%s' already exists",
-								vehicle.getVehicleId(), vehicle.getRegNo()));
+						String.format("Vehicle with VIN '%s' already exists", vehicle.getVehicleId()));
 			}
 
 			// Check if customer exists
@@ -60,7 +64,8 @@ public class VehicleService {
 			vehicleRepository.save(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.OK);
 		} catch (FeignException feignEx) {
-			return new ResponseEntity<>("Error while retrieving customer data." + feignEx.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Error while retrieving customer data." + feignEx.getMessage(),
+					HttpStatus.BAD_REQUEST);
 		} catch (Exception ex) {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -85,6 +90,10 @@ public class VehicleService {
 
 	public ResponseEntity<Object> updateVehicle(Vehicle vehicle) {
 		try {
+			ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicle.getVehicleId());
+			if (existingVehicle.getStatusCode() != HttpStatus.OK || existingVehicle.getBody() == null) {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
 			vehicleRepository.save(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.OK);
 		} catch (Exception ex) {
@@ -92,12 +101,12 @@ public class VehicleService {
 		}
 	}
 
-	public ResponseEntity<Void> deleteVehicle(String vehicleId) {
+	public ResponseEntity<String> deleteVehicle(String vehicleId) {
 		try {
 			vehicleRepository.deleteById(vehicleId);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
 
@@ -108,7 +117,8 @@ public class VehicleService {
 			if (vehicle != null) {
 				LocalDateTime pingDtm = vehicle.getPingDtm();
 
-				if (pingDtm != null && LocalDateTime.now().minusMinutes(1).compareTo(pingDtm) <= 0) {
+				if (pingDtm != null && LocalDateTime.now().minusMinutes(configProperties.getConnectionTimeoutMinutes())
+						.compareTo(pingDtm) <= 0) {
 					return new ResponseEntity<>("CONNECTED", HttpStatus.OK);
 				}
 			}

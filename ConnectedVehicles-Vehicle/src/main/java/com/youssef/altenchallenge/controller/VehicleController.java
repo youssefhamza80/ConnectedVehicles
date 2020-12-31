@@ -43,6 +43,11 @@ public class VehicleController {
 	public ResponseEntity<String> getVehicleConnectionStatus(@PathVariable String vehicleId) {
 		return vehicleService.getVehicleConnectionStatus(vehicleId);
 	}
+	
+	@PutMapping
+	public ResponseEntity<Object> updateVehicle(@RequestBody Vehicle vehicle) {
+		return vehicleService.updateVehicle(vehicle);
+	}
 
 	@PostMapping
 	public ResponseEntity<Object> insertVehicle(@RequestBody Vehicle vehicle) {
@@ -50,7 +55,7 @@ public class VehicleController {
 	}
 
 	@DeleteMapping("/{vehicleId}")
-	public ResponseEntity<Void> deleteVehicle(@PathVariable String vehicleId) {
+	public ResponseEntity<String> deleteVehicle(@PathVariable String vehicleId) {
 		return vehicleService.deleteVehicle(vehicleId);
 	}
 	
