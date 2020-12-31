@@ -58,7 +58,7 @@ public class VehicleService {
 						String.format("Customer id: %d does not exist", vehicle.getCustomerId()));
 			}
 			vehicleRepository.save(vehicle);
-			return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
+			return new ResponseEntity<>(vehicle, HttpStatus.OK);
 		} catch (FeignException feignEx) {
 			return new ResponseEntity<>("Error while retrieving customer data." + feignEx.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception ex) {
