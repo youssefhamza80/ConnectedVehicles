@@ -101,7 +101,7 @@ public class CustomerControllerTest {
 
 	@Test
 	public void whenUpdatingExistingCustomer_thenStatusIsOK() {
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+		ResponseEntity<Object> responseEntity = new ResponseEntity<>(HttpStatus.OK);
 		when(customerService.updateCustomer(any(Customer.class))).thenReturn(responseEntity);
 		Map<String, String> request = new HashMap<>();
 		request.put("name", "Youssef");
@@ -112,7 +112,7 @@ public class CustomerControllerTest {
 
 	@Test
 	public void whenUpdatingNonExistingCustomer_thenStatusIsNotFound() {
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		ResponseEntity<Object> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		when(customerService.updateCustomer(any(Customer.class))).thenReturn(responseEntity);
 		Map<String, String> request = new HashMap<>();
 		request.put("name", "Youssef");

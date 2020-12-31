@@ -40,7 +40,7 @@ class VehicleServiceTest {
 	VehicleService vehicleService;
 
 	@Test
-	public void whenCallingGetAllVehicles_thenAllVehiclesAreReturned() {
+	void whenCallingGetAllVehicles_thenReturnAllVehicles() {
 
 		List<Vehicle> expectedVehicles = new ArrayList<>();
 
@@ -51,12 +51,12 @@ class VehicleServiceTest {
 
 		List<Vehicle> actualVehicles = vehicleService.findAll();
 
-		assertAll(() -> assertNotNull(actualVehicles), () -> assertTrue(actualVehicles.size() > 0),
+		assertAll(() -> assertNotNull(actualVehicles), () -> assertEquals(2, actualVehicles.size()),
 				() -> assertEquals(expectedVehicles, actualVehicles));
 	}
 
 	@Test
-	public void whenAddingNewVehicleToExistingCustomer_thenStatusIsCreatedAndVehicleObjectIsReturned() {
+	void whenAddingNewVehicleToExistingCustomer_thenStatusIsCreatedAndVehicleObjectIsReturned() {
 		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(newVehicle, HttpStatus.CREATED);
@@ -78,7 +78,7 @@ class VehicleServiceTest {
 	};
 
 	@Test
-	public void whenAddingNewVehicleToNonExistingCustomer_thenStatusIsBadRequestAndErrorMessageIsThere() {
+	void whenAddingNewVehicleToNonExistingCustomer_thenStatusIsBadRequestAndErrorMessageIsThere() {
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>("Customer id: 100 does not exist",
 				HttpStatus.BAD_REQUEST);
 		Vehicle newVehicle = new Vehicle(100, "VIN1", "REGNO1", null);
@@ -94,7 +94,7 @@ class VehicleServiceTest {
 	};
 
 	@Test
-	public void whenAddingDuplicatedVehicle_thenStatusIsBadRequest() {
+	void whenAddingDuplicatedVehicle_thenStatusIsBadRequest() {
 
 		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
 
@@ -119,7 +119,7 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenUpdatingExistingVehicleStatusIsOK() {
+	void whenUpdatingExistingVehicleStatusIsOK() {
 
 		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG", null);
 
@@ -146,7 +146,7 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenUpdatingNonExistingVehicle_thenStatusIsNotFound() {
+	void whenUpdatingNonExistingVehicle_thenStatusIsNotFound() {
 		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG", null);
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		when(vehicleRepository.findById(updatedVehicle.getVehicleId())).thenReturn(Optional.empty());
@@ -163,7 +163,7 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenDeletingExistingVehicle_thenStatusIsOK() {
+	void whenDeletingExistingVehicle_thenStatusIsOK() {
 		Vehicle vehicleToDelete = new Vehicle(1, "VIN1", "UPDATED REG", null);
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.OK);
 
@@ -178,7 +178,7 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenDeletingNonExistingVehicle_thenStatusIsNotFound() {
+	void whenDeletingNonExistingVehicle_thenStatusIsNotFound() {
 		Vehicle vehicleToDelete = new Vehicle(1, "VIN1", "UPDATED REG", null);
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
@@ -191,7 +191,7 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenGetExistingConnectedVehicleStatus_thenStatusIsOKAndStatusIsConnected() {
+	void whenGetExistingConnectedVehicleStatus_thenStatusIsOKAndStatusIsConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("CONNECTED", HttpStatus.OK);
 
 		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", LocalDateTime.now().plusMinutes(1));
@@ -207,7 +207,7 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenGetExistingVehicleStatusNullPingDTM_thenStatusIsOKAndStringIsNotConnected() {
+	void whenGetExistingVehicleStatusNullPingDTM_thenStatusIsOKAndStringIsNotConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("NOT CONNECTED", HttpStatus.OK);
 
 		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
@@ -223,7 +223,7 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenGetExistingVehicleStatusOldPingDTM_thenStatusIsOKAndStringIsNotConnected() {
+	void whenGetExistingVehicleStatusOldPingDTM_thenStatusIsOKAndStringIsNotConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("NOT CONNECTED", HttpStatus.OK);
 
 		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", LocalDateTime.now().minusHours(2));
@@ -239,7 +239,7 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenGetNonExistingVehicleStatus_thenStatusIsOKAndStringIsNotConnected() {
+	void whenGetNonExistingVehicleStatus_thenStatusIsOKAndStringIsNotConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("NOT CONNECTED", HttpStatus.OK);
 
 		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", LocalDateTime.now().minusHours(2));
@@ -255,7 +255,7 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenPingingExistingVehicleStatusIsOKAndUpdatedVehicleIsReturned() {
+	void whenPingingExistingVehicleStatusIsOKAndUpdatedVehicleIsReturned() {
 		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(existingVehicle, HttpStatus.OK);
@@ -276,7 +276,7 @@ class VehicleServiceTest {
 	}
 
 	@Test
-	public void whenPingingNonExistingVehicleStatusIsNotFound() {
+	void whenPingingNonExistingVehicleStatusIsNotFound() {
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 

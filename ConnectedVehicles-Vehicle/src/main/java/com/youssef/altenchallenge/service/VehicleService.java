@@ -50,24 +50,24 @@ public class VehicleService {
 		try {
 			ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicle.getVehicleId());
 			if (existingVehicle.getStatusCode() == HttpStatus.OK) {
-				throw new IllegalArgumentException(
-						String.format("Vehicle with VIN '%s' already exists", vehicle.getVehicleId()));
+				return new ResponseEntity<>(String.format("Vehicle with VIN '%s' already exists", vehicle.getVehicleId()),
+						HttpStatus.BAD_REQUEST);
 			}
 
 			// Check if customer exists
 			ResponseEntity<Customer> foundCustomer = customerClient.findCustomer(vehicle.getCustomerId());
 
 			if (foundCustomer == null || foundCustomer.getStatusCode() != HttpStatus.OK) {
-				throw new IllegalArgumentException(
-						String.format("Customer id: %d does not exist", vehicle.getCustomerId()));
+				return new ResponseEntity<>(String.format("Customer id: %d does not exist", vehicle.getCustomerId()),
+						HttpStatus.BAD_REQUEST);
 			}
 			vehicleRepository.save(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
 		} catch (FeignException feignEx) {
 			return new ResponseEntity<>("Error while retrieving customer data." + feignEx.getMessage(),
-					HttpStatus.BAD_REQUEST);
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -84,7 +84,7 @@ public class VehicleService {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class VehicleService {
 			vehicleRepository.save(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.OK);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -111,7 +111,7 @@ public class VehicleService {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

@@ -39,7 +39,6 @@ public class CustomerService {
 
 	public ResponseEntity<Customer> findByName(String name) {
 		List<Customer> customers = customerRepository.findByName(name);
-
 		if (!customers.isEmpty()) {
 			return new ResponseEntity<>(customers.get(0), HttpStatus.OK);
 		} else {
@@ -51,17 +50,18 @@ public class CustomerService {
 		try {
 			ResponseEntity<Customer> existingCustomer = findByName(customer.getName());
 			if (existingCustomer.getStatusCode() == HttpStatus.OK) {
-				throw new IllegalArgumentException(String.format("Customer '%s' already exists", customer.getName()));
+				return new ResponseEntity<>(String.format("Customer '%s' already exists", customer.getName()),
+						HttpStatus.BAD_REQUEST);
 			}
 			customer.setId(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME));
-			customer = customerRepository.save(customer);
+			customerRepository.save(customer);
 			return new ResponseEntity<>(customer, HttpStatus.CREATED);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
-	public ResponseEntity<String> updateCustomer(Customer customer) {
+	public ResponseEntity<Object> updateCustomer(Customer customer) {
 		try {
 			ResponseEntity<Customer> existingCustomer = findById(customer.getId());
 			if (existingCustomer.getStatusCode() != HttpStatus.OK) {
@@ -69,9 +69,9 @@ public class CustomerService {
 						HttpStatus.NOT_FOUND);
 			}
 			customerRepository.save(customer);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(customer, HttpStatus.OK);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -79,12 +79,13 @@ public class CustomerService {
 		try {
 			ResponseEntity<Customer> existingCustomer = findById(customerId);
 			if (existingCustomer.getStatusCode() != HttpStatus.OK) {
-				throw new IllegalArgumentException(String.format("Customer '%d' is not found", customerId));
+				return new ResponseEntity<>(String.format("Customer '%d' is not found", customerId),
+						HttpStatus.NOT_FOUND);
 			}
 			customerRepository.deleteById(customerId);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

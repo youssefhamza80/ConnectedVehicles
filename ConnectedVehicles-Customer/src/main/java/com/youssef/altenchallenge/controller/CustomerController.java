@@ -40,7 +40,7 @@ public class CustomerController {
 	}
 	
 	@PutMapping
-	public ResponseEntity<String> updateCustomer(@RequestBody Customer customer) {
+	public ResponseEntity<Object> updateCustomer(@RequestBody Customer customer) {
 		return customerService.updateCustomer(customer);
 	}
 	
