@@ -12,19 +12,19 @@ addons:
 script:
 - cd ConnectedVehicles-APIGateway
 - mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-- sonar-scanner
+#- sonar-scanner
 - cd ../ConnectedVehicles-ConfigServer
 - mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-- sonar-scanner
+#- sonar-scanner
 - cd ../ConnectedVehicles-Discovery
 - mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-- sonar-scanner
+#- sonar-scanner
 - cd ../ConnectedVehicles-Customer
 - mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-- sonar-scanner
+#- sonar-scanner
 - cd ../ConnectedVehicles-Vehicle
 - mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-- sonar-scanner
+#- sonar-scanner
 notifications:
   email:
     recipients:
