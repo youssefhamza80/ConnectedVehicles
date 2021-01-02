@@ -9,5 +9,4 @@ class ConnectedVehiclesCustomerApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
