@@ -7,9 +7,9 @@ cache:
   - "$HOME/.sonar/cache"
 addons:
   sonarcloud:
-    organization: yousifkamal1980
+    organization: YoussefHamza
     token:
-      secure: kJzccd9JxO65I4Yl8rUdsoY8zRxYRl0MlfSJETXwyHPhcVJ7XTGQEsQYkuShJR7uv75Ezdy0uzYddJm7TPrQLBbRFzAHUdZuqr8EzzDea9UXIIYuwqT75EW2dLYurO3MutRMzadho0hrusv1mhUgG6Fw/zS7TMhwIwf9RZ43nhKq580IDp1C+FFybCCLz7J0zBqpOP42jP/VcrdBevtGxO0bW0CeT2SZQOEHlGITb5xxYFqmo1KhOsZVQB6WD9Be8oKf1cQlom94ARAWEJXZbxZ+3YZ+2Opwd5JuPXC+DIvIVzI9aAymJ1ZmenORdxflVE3Ya3Dwcdo4fS4tusezVJ+3bc2H012ltyev0yPzg+CYvuivHzk3pvzWc0YmjYq08Z1QNYlDbDRgd69ijKhMUrdxiqZSpwSeWc8NpS81NaguzPQzarYnAQ0H2zgfR0/8cw28XLMbMWda4lguqI0a10ISNyNC7ziW72CJB9gTqP3GEoxf5roEZ9yanx8koHJkOuOjR/AhSzi9R/BYrVwcLWMvjkoIO0d5UbSHqaykYIOjJ8/1dMYI5gRcKLwPdrPE+mtFNdEXvYNygy0nSU5oUERx/gRdLWKBAT0d8RKmzsAZ5VsS6q/2fmH6i6yCBRJH4COhBAa4mbzONeQN6kkvWNxNgHF+3XHHQP1yKnn0VcY=
+      secure:  LIiOD2j/lLifVrEhv8qhVPPeJNZJZiB7DHbUDJyLGlxbdk0vEmOnwlI8xvkEjTX4wtUr+aUDoYOrCTEUlmanROUxE3zgQiVOCiqpYaIkuDh6Zj4oaJFJprz4qFpDoQDGFzx4fWIWhOhGCgim48J03mpFhBGZsoO3VqWS1o+tthXXK8cD5wwi5kTX1LFQZd5sRW12SwlRe9uQ5GOyR43fnprZWR5hUVldLbezT9WMY8loPyho/PuyBXGyEPg68+/fqr7XHP13HOiD6cz0NsJddMQHvvsoaBbVuO3w4cIO7hCRvVQeOzxLEX2Rf7zpqC3nbBnth6vWttrE3FMKcOG0+gpPTmEazAvT2ejV/xx3EMPSXYU+ayAnG+/SfrJkvsALs7a4eGPnUWLwdKq03ymdpToVUVM0kuzrysxyOLRVrMuTmB4tseW8UQ/ZkXuuvaxhMTk7BzYImDlcx3H4tuTwfMisDnAgXMtj7tumfN58AVqW9tzqp/rlvfsuEWgbXGtQFp53wpLuxqnfHyx6hR/E9bPEn2A38gp+2EkCfS5AqkbdtQvtvQfn3UpWuCyBvx1pAY+cMbUwk6fGy+D8OBujVLLc33ycl1B9N0F5X9kJnHZSrj8vQhbggMtOs5UWO0RN9VAwg0/ddhcUlt0SYtnj2mnu8ksYM+l/yIJcobqyTQk=
 script:
 - cd ConnectedVehicles-APIGateway
 - mvn clean install -DskipTests
@@ -32,5 +32,3 @@ notifications:
     - yousif.kamal@gmail.com
     on_success: always
     on_failure: always
-
-   
