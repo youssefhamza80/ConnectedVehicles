@@ -3,8 +3,33 @@ language: java
 jdk: oraclejdk11
 install: true
 
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
+
+addons:
+  sonarcloud:
+    organization: "youssefhamza80" # the key of the org you chose at step #3
+    token:
+      secure: "TuCO2P+R+hZID18HkWlqNch071V6UdJNnjbBdiJZ1xOl8qFbjMqXsx6Cm4RieIrXBBvLdgZ1R+1DC00PVSbKVMfycgvYv1T9706u+x0ECY810JbFwtdXYle8I5noXXSzIbrP1rYuOBCSFyu5WteWRvFwnCZd97nlXIOcmIbM0SjkvNVEcyBZz/A9S8hjvlLNyUzjtYMy99g6ggMYY9cGCEYGoYZe4IBv4jRSbkySElAmjGNXDygwoC4QdSqwPDZMxcY5lOgNZ6E7F8ZY1fZsZaOtMx84/Jw6OTN43thiZ9zPX3vLAVjwLL9xzmgB8+uqEKZCxgfKlSqSG13sye325pgG4N/03Uguf8NCKlyImxq9GDXUNTl4DHSHQOPubPfwY7Vl9RYpwC3nzvP0y4XYSRbAKNItiu9a98mWKJzjr1+ccZChgjhKsVLNGT+8qpAW+eWMdgU0FRUqfRypI+H101YliK4kUMANoMsV/lwPFTOYuqfCCO8/f6rCZmjtB+aPazdwK3s8HRTupfloDze1l/AmpnqWtBKLLmXiy1Ejq9bMJIVIBEnU6Ye+9jz74OMkB0vtZIlmNl1QQEcjJsLh2PYMlOmVhBxk6Z6e2a2jItPWF90h8aCp8mOP0lEBtX/n6ephI9qBj0AfLQskDRFqWBBYfh5eALUcHutTuuWIY20=" # encrypted value of your token
+
 script: 
+    - cd ConnectedVehicles-APIGateway
     - mvn clean install -DskipTests
+    - sonar-scanner
+    - cd ../ConnectedVehicles-ConfigServer
+    - mvn clean install -DskipTests
+    - sonar-scanner
+    - cd ../ConnectedVehicles-Discovery
+    - mvn clean install -DskipTests
+    - sonar-scanner
+    - cd ../ConnectedVehicles-Customer
+    - mvn clean install -DskipTests
+    - sonar-scanner
+    - cd ../ConnectedVehicles-Vehicle
+    - mvn clean install -DskipTests
+    - sonar-scanner
+    
 notifications:
   email:
     recipients:

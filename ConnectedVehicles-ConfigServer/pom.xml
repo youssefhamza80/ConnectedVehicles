@@ -8,8 +8,8 @@
 		<artifactId>connectedvehicles-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>		
 	</parent>
-	<artifactId>ConnectedVehicles-Config</artifactId>
-	<name>ConnectedVehicles-Config</name>
+	<artifactId>ConnectedVehicles-ConfigServer</artifactId>
+	<name>ConnectedVehicles-ConfigServer</name>
 	<description>Configuration Service for ConnectedVehicles Alten Challenge</description>
 
 	<properties>
