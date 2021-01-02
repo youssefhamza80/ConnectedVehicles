@@ -8,7 +8,7 @@ cache:
 addons:
   sonarcloud:
     organization: youssefhamza80
-    
+   
 script:
 - cd ConnectedVehicles-APIGateway
 - mvn clean install -DskipTests
