@@ -12,7 +12,7 @@ addons:
     
 script:
 #- cd ConnectedVehicles-APIGateway
-- mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 #- sonar-scanner
 #- cd ../ConnectedVehicles-ConfigServer
 #- mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
