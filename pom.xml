@@ -16,6 +16,7 @@
 	<name>connectedvehicles-parent</name>
 	<description>connectedvehicles-parent</description>
 	<modules>
+		
 		<module>ConnectedVehicles-ConfigServer</module>
 		<module>ConnectedVehicles-APIGateway</module>
 		<module>ConnectedVehicles-Discovery</module>
