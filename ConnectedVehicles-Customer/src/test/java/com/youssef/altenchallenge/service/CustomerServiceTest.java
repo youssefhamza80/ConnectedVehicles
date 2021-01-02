@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -56,9 +57,13 @@ class CustomerServiceTest {
 
 		Customer newCustomer = new Customer(0, "Youssef", "Doha Qatar");
 
+		Customer returnedCustomer = new Customer(1, "Youssef", "Doha Qatar");
+
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(newCustomer, HttpStatus.CREATED);
 
 		when(customerRepository.findByName(newCustomer.getName())).thenReturn(new ArrayList<Customer>());
+
+		when(customerRepository.save(newCustomer)).thenReturn(returnedCustomer);
 
 		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1L);
 
@@ -72,6 +77,28 @@ class CustomerServiceTest {
 						((Customer) actualResponse.getBody()).getName()),
 				() -> assertEquals(((Customer) expectedResponse.getBody()).getName(),
 						((Customer) actualResponse.getBody()).getName()));
+	};
+
+	@Test
+	void whenAddingNewCustomerAndInternalExceptionThrown_thenStatusIsInternalServerError() {
+
+		Customer newCustomer = new Customer(0, "Youssef", "Doha Qatar");
+
+		Customer returnedCustomer = new Customer(1, "Youssef", "Doha Qatar");
+
+		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+		when(customerRepository.findByName(newCustomer.getName()))
+				.thenThrow(new RuntimeException("Cannot retrieve customer data from DB"));
+
+		when(customerRepository.save(newCustomer)).thenReturn(returnedCustomer);
+
+		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1L);
+
+		ResponseEntity<Object> actualResponse = customerService.insertNewCustomer(newCustomer);
+
+		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
+				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()));
 	};
 
 	@Test
@@ -106,6 +133,8 @@ class CustomerServiceTest {
 
 		when(customerRepository.findById(existingCustomer.getId())).thenReturn(Optional.of(existingCustomer));
 
+		when(customerRepository.save(updatedCustomer)).thenReturn(updatedCustomer);
+
 		ResponseEntity<Object> actualResponse = customerService.updateCustomer(updatedCustomer);
 
 		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
@@ -117,6 +146,23 @@ class CustomerServiceTest {
 						((Customer) actualResponse.getBody()).getName()),
 				() -> assertEquals(((Customer) expectedResponse.getBody()).getName(),
 						((Customer) actualResponse.getBody()).getName()));
+	}
+
+	@Test
+	void whenUpdatingExistingCustomerAndInternalExceptionThrown_thenStatusIsInternalServerError() {
+		Customer existingCustomer = new Customer(1, "Youssef", "Doha Qatar");
+		Customer updatedCustomer = new Customer(1, "Youssef Hamza", "Doha Qatar");
+
+		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+		when(customerRepository.findById(existingCustomer.getId())).thenReturn(Optional.of(existingCustomer));
+		when(customerRepository.save(updatedCustomer))
+				.thenThrow(new RuntimeException("Exception while updating customer instance"));
+
+		ResponseEntity<Object> actualResponse = customerService.updateCustomer(updatedCustomer);
+
+		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
+				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()));
 	}
 
 	@Test

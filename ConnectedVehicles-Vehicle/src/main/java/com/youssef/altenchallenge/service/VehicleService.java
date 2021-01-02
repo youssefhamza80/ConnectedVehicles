@@ -50,7 +50,8 @@ public class VehicleService {
 		try {
 			ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicle.getVehicleId());
 			if (existingVehicle.getStatusCode() == HttpStatus.OK) {
-				return new ResponseEntity<>(String.format("Vehicle with VIN '%s' already exists", vehicle.getVehicleId()),
+				return new ResponseEntity<>(
+						String.format("Vehicle with VIN '%s' already exists", vehicle.getVehicleId()),
 						HttpStatus.BAD_REQUEST);
 			}
 
@@ -61,7 +62,7 @@ public class VehicleService {
 				return new ResponseEntity<>(String.format("Customer id: %d does not exist", vehicle.getCustomerId()),
 						HttpStatus.BAD_REQUEST);
 			}
-			vehicleRepository.save(vehicle);
+			vehicle = vehicleRepository.save(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
 		} catch (FeignException feignEx) {
 			return new ResponseEntity<>("Error while retrieving customer data." + feignEx.getMessage(),
@@ -78,7 +79,7 @@ public class VehicleService {
 			if (existingVehicle.getStatusCode() == HttpStatus.OK && existingVehicle.getBody() != null) {
 				vehicle = existingVehicle.getBody();
 				vehicle.setPingDtm(LocalDateTime.now());
-				vehicleRepository.save(vehicle);
+				vehicle = vehicleRepository.save(vehicle);
 				return new ResponseEntity<>(vehicle, HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -94,7 +95,7 @@ public class VehicleService {
 			if (existingVehicle.getStatusCode() != HttpStatus.OK || existingVehicle.getBody() == null) {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
-			vehicleRepository.save(vehicle);
+			vehicle = vehicleRepository.save(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.OK);
 		} catch (Exception ex) {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

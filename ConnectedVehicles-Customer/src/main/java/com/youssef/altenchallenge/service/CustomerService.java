@@ -54,7 +54,7 @@ public class CustomerService {
 						HttpStatus.BAD_REQUEST);
 			}
 			customer.setId(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME));
-			customerRepository.save(customer);
+			customer = customerRepository.save(customer);
 			return new ResponseEntity<>(customer, HttpStatus.CREATED);
 		} catch (Exception ex) {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -68,7 +68,7 @@ public class CustomerService {
 				return new ResponseEntity<>(String.format("Customer '%d' is not found", customer.getId()),
 						HttpStatus.NOT_FOUND);
 			}
-			customerRepository.save(customer);
+			customer = customerRepository.save(customer);
 			return new ResponseEntity<>(customer, HttpStatus.OK);
 		} catch (Exception ex) {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

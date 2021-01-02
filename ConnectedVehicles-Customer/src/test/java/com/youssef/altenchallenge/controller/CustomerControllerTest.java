@@ -65,9 +65,26 @@ public class CustomerControllerTest {
 	}
 
 	@Test
-	public void whenAddingNewCustomer_thenStatusIsCreatedAndBodyIsCorrect() {
+	public void whenFindingExistingCustomer_thenStatusIsOKAndBodyIsCorrect() {
 
 		List<Customer> customers = new ArrayList<>();
+		Customer existingCustomer = new Customer(1, "Youssef", "Doha Qatar");
+		customers.add(existingCustomer);
+		ResponseEntity<Customer> expectedResponse = new ResponseEntity<>(existingCustomer, HttpStatus.OK);
+
+		when(customerService.findById(existingCustomer.getId())).thenReturn(expectedResponse);
+
+		Customer retrievedCustomer = get(uri + "/1").then().statusCode(HttpStatus.OK.value()).extract()
+				.as(Customer.class);
+
+		assertAll(() -> assertNotNull(retrievedCustomer),
+				() -> assertEquals(existingCustomer.getId(), retrievedCustomer.getId()),
+				() -> assertEquals(existingCustomer.getName(), retrievedCustomer.getName()),
+				() -> assertEquals(existingCustomer.getAddress(), retrievedCustomer.getAddress()));
+	};
+
+	@Test
+	public void whenAddingNewCustomer_thenStatusIsCreatedAndBodyIsCorrect() {
 		Customer newCustomer = new Customer(1, "Youssef", "Doha Qatar");
 		ResponseEntity<Object> responseEntity = new ResponseEntity<Object>(newCustomer, HttpStatus.CREATED);
 		when(customerService.insertNewCustomer((Customer) any(Customer.class))).thenReturn(responseEntity);
@@ -75,7 +92,6 @@ public class CustomerControllerTest {
 		Map<String, String> request = new HashMap<>();
 		request.put("name", "Youssef");
 		request.put("address", "Doha Qatar");
-		// when(customerService.findAll()).thenReturn(customers);
 
 		Customer retrievedCustomer = given().contentType("application/json").body(request).when().post(uri).then()
 				.statusCode(HttpStatus.CREATED.value()).extract().as(Customer.class);
@@ -94,7 +110,7 @@ public class CustomerControllerTest {
 		Map<String, String> request = new HashMap<>();
 		request.put("name", "Youssef");
 		request.put("address", "Doha Qatar");
-		
+
 		given().contentType("application/json").body(request).when().post(uri).then()
 				.statusCode(HttpStatus.BAD_REQUEST.value());
 	}
@@ -106,7 +122,7 @@ public class CustomerControllerTest {
 		Map<String, String> request = new HashMap<>();
 		request.put("name", "Youssef");
 		request.put("address", "Doha Qatar");
-		
+
 		given().contentType("application/json").body(request).when().put(uri).then().statusCode(HttpStatus.OK.value());
 	}
 
@@ -117,7 +133,7 @@ public class CustomerControllerTest {
 		Map<String, String> request = new HashMap<>();
 		request.put("name", "Youssef");
 		request.put("address", "Doha Qatar");
-		
+
 		given().contentType("application/json").body(request).when().put(uri).then()
 				.statusCode(HttpStatus.NOT_FOUND.value());
 	}
@@ -127,8 +143,8 @@ public class CustomerControllerTest {
 
 		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.OK);
 		when(customerService.deleteCustomer(1)).thenReturn(responseEntity);
-		
-		delete(uri+"/1").then().statusCode(HttpStatus.OK.value());
+
+		delete(uri + "/1").then().statusCode(HttpStatus.OK.value());
 	}
 
 	@Test
@@ -136,6 +152,6 @@ public class CustomerControllerTest {
 		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.NOT_FOUND);
 		when(customerService.deleteCustomer(1)).thenReturn(responseEntity);
 
-		delete(uri+"/1").then().statusCode(HttpStatus.NOT_FOUND.value());
+		delete(uri + "/1").then().statusCode(HttpStatus.NOT_FOUND.value());
 	}
 }

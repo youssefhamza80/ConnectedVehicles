@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -69,6 +70,21 @@ public class VehicleControllerTest {
 
 		get(uri).then().statusCode(HttpStatus.OK.value()).assertThat().body("size()", is(2));
 	}
+
+	@Test
+	public void whenFindingExistingVehicleStatusIsOKAndBodyIsCorrect() {
+
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
+
+		ResponseEntity<Vehicle> expectedResponse = new ResponseEntity<>(existingVehicle, HttpStatus.OK);
+
+		when(vehicleService.findByVehicleId(existingVehicle.getVehicleId())).thenReturn(expectedResponse);
+
+		get(uri + "/" + existingVehicle.getVehicleId()).then().statusCode(HttpStatus.OK.value()).assertThat()
+				.body("regNo", equalTo(existingVehicle.getRegNo()))
+				.body("customerId", equalTo((int)existingVehicle.getCustomerId()))
+				.body("vehicleId", equalTo(existingVehicle.getVehicleId()));
+	};
 
 	@Test
 	public void whenAddingNewVehicleToExistingCustomer_thenStatusIsCreatedAndBodyIsCorrect() {
@@ -201,10 +217,10 @@ public class VehicleControllerTest {
 				() -> assertEquals(retrievedVehicle.getRegNo(), updatedVehicle.getRegNo()),
 				() -> assertEquals(retrievedVehicle.getPingDtm(), updatedVehicle.getPingDtm()));
 	}
-	
+
 	@Test
 	public void whenPingingNonExistingVehicleStatusIsNotFound() {
-		
+
 		ResponseEntity<Object> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 		when(vehicleService.ping("VIN1")).thenReturn(responseEntity);

@@ -29,8 +29,8 @@ public class DatabaseSequence {
 
 	public DatabaseSequence(String id, long seq) {
 		super();
-		this.id = id;
-		this.seq = seq;
+		setId(id);
+		setSeq(seq);
 	}
 
 	public DatabaseSequence() {
