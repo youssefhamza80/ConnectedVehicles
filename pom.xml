@@ -10,11 +10,13 @@
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
+	
 	<properties>
 		<sonar.projectKey>youssefhamza80_ConnectedVehicles</sonar.projectKey>
 		<sonar.organization>youssefhamza80</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
+	
 	<groupId>com.youssef.altenchallenge</groupId>
 	<artifactId>connectedvehicles-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
