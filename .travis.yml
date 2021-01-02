@@ -7,23 +7,24 @@ cache:
   - "$HOME/.sonar/cache"
 addons:
   sonarcloud:
-    organization: youssefhamza80
-   
+    organization: "youssefhamza80"
+    token:
+      secure: "lzTc97l3gTT4TqLo9oGK3e0Sx50hLCjfIqODveT2MgC6meI/oJjVEA/x08wvelSKWg+96lJnDRtpEQFYKyvmBJ4oEwRe/aet1o6gbrmQhbu/OUurYy9LaWXKTFvnfxs00FddA0OLkZ+GXToHH0Y2VkqQkVaplbUaXNq4EE3X5l5KtrOpQJ/b8pOiP6UkUAKA1G4aW99UOCFnYMR0NQjJ+DI2gfuVWmSECEVNXRIUwn7raVa4TRTaHIZTsJlLSn5z93Z2Xkcw5Q52J/ML012CVSdOejJG71CJx+0tlZpxfct3uXWLCqeqqY3QtmBr6N7G/mHSR/np0kCllq9PnF9jiXJbngvW4ZCdCxFqIJcPfUMxfeJO/FUtZ+Zwaaqo1UNEH6yH+tTpAQXE9iuZbpi1eApgyHorHFDz1gozIg/F//sDk4NXraA1J4LxsPxR0YoZumIhIDzMk3zWQ44Ibh92665ADV+bRAf1L8C+pL2UU1uW3Z8YGbtdzWNc5ojt17V3u7eQExlxgvfhgWtlZ0G/UBPzmSUj9sRRf0AfFqJSFAbc0V4E/jyMxwnsuxWl/XBNPJBcHxdD/AIn4T9NH59djGgycvF/rns6tdmNpL6TwmGNKlbGiJ/pBJ16XgMO006IQgCHCSexHmizV2r8NZnn+l7NlMlAtqEm6gGdz0Tdbko="   
 script:
 - cd ConnectedVehicles-APIGateway
-- mvn clean install -DskipTests
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
 - sonar-scanner
 - cd ../ConnectedVehicles-ConfigServer
-- mvn clean install -DskipTests
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
 - sonar-scanner
 - cd ../ConnectedVehicles-Discovery
-- mvn clean install -DskipTests
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
 - sonar-scanner
 - cd ../ConnectedVehicles-Customer
-- mvn clean install -DskipTests
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
 - sonar-scanner
 - cd ../ConnectedVehicles-Vehicle
-- mvn clean install -DskipTests
+- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
 - sonar-scanner
 notifications:
   email:
