@@ -18,8 +18,8 @@
 	<modules>
 		<module>ConnectedVehicles-ConfigServer</module>
 		<module>ConnectedVehicles-APIGateway</module>
-		<module>ConnectedVehicles-Customer</module>
 		<module>ConnectedVehicles-Discovery</module>
+		<module>ConnectedVehicles-Customer</module>
 		<module>ConnectedVehicles-Vehicle</module>
 	</modules>
 </project>
