@@ -4,7 +4,7 @@ jdk: oraclejdk11
 install: true
 
 script: 
-    - mvn clean install
+    - mvn clean install -Dskiptests
 notifications:
   email:
     recipients:
