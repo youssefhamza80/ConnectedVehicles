@@ -7,7 +7,7 @@ cache:
   - "$HOME/.sonar/cache"
 addons:
   sonarcloud:
-    organization: YoussefHamza
+    organization: youssefhamza80
     token:
       secure: LIiOD2j/lLifVrEhv8qhVPPeJNZJZiB7DHbUDJyLGlxbdk0vEmOnwlI8xvkEjTX4wtUr+aUDoYOrCTEUlmanROUxE3zgQiVOCiqpYaIkuDh6Zj4oaJFJprz4qFpDoQDGFzx4fWIWhOhGCgim48J03mpFhBGZsoO3VqWS1o+tthXXK8cD5wwi5kTX1LFQZd5sRW12SwlRe9uQ5GOyR43fnprZWR5hUVldLbezT9WMY8loPyho/PuyBXGyEPg68+/fqr7XHP13HOiD6cz0NsJddMQHvvsoaBbVuO3w4cIO7hCRvVQeOzxLEX2Rf7zpqC3nbBnth6vWttrE3FMKcOG0+gpPTmEazAvT2ejV/xx3EMPSXYU+ayAnG+/SfrJkvsALs7a4eGPnUWLwdKq03ymdpToVUVM0kuzrysxyOLRVrMuTmB4tseW8UQ/ZkXuuvaxhMTk7BzYImDlcx3H4tuTwfMisDnAgXMtj7tumfN58AVqW9tzqp/rlvfsuEWgbXGtQFp53wpLuxqnfHyx6hR/E9bPEn2A38gp+2EkCfS5AqkbdtQvtvQfn3UpWuCyBvx1pAY+cMbUwk6fGy+D8OBujVLLc33ycl1B9N0F5X9kJnHZSrj8vQhbggMtOs5UWO0RN9VAwg0/ddhcUlt0SYtnj2mnu8ksYM+l/yIJcobqyTQk=
 script:
