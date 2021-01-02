@@ -14,18 +14,18 @@ script:
 - cd ConnectedVehicles-APIGateway
 - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
 - sonar-scanner
-- cd ../ConnectedVehicles-ConfigServer
-- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-- sonar-scanner
-- cd ../ConnectedVehicles-Discovery
-- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-- sonar-scanner
-- cd ../ConnectedVehicles-Customer
-- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-- sonar-scanner
-- cd ../ConnectedVehicles-Vehicle
-- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-- sonar-scanner
+#- cd ../ConnectedVehicles-ConfigServer
+#- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
+#- sonar-scanner
+#- cd ../ConnectedVehicles-Discovery
+#- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
+#- sonar-scanner
+#- cd ../ConnectedVehicles-Customer
+#- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
+#- sonar-scanner
+#- cd ../ConnectedVehicles-Vehicle
+#- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
+#- sonar-scanner
 notifications:
   email:
     recipients:
