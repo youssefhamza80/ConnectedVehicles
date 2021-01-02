@@ -8,7 +8,7 @@ cache:
 addons:
   sonarcloud:
     organization: "youssefhamza80"
-    token: ${SONAR_TOKEN}      
+    token: ${SONAR_TOKEN}
 script:
 #- cd ConnectedVehicles-APIGateway
 - mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
