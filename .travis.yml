@@ -11,7 +11,7 @@ addons:
     token: ${SONAR_TOKEN}      
 script:
 #- cd ConnectedVehicles-APIGateway
-- mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
+- mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 #- sonar-scanner
 #- cd ../ConnectedVehicles-ConfigServer
 #- mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
