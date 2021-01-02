@@ -13,8 +13,10 @@
 	
 	<properties>
 		<sonar.projectKey>youssefhamza80_ConnectedVehicles</sonar.projectKey>
-		<sonar.organization>youssefhamza80</sonar.organization>
+		<sonar.moduleKey>${artifactId}</sonar.moduleKey>
+<!--		<sonar.organization>youssefhamza80</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		-->
 	</properties>
 	
 	<groupId>com.youssef.altenchallenge</groupId>
