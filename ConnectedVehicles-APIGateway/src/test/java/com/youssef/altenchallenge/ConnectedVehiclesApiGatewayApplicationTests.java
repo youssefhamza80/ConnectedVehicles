@@ -1,5 +1,7 @@
 package com.youssef.altenchallenge;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -8,7 +10,7 @@ class ConnectedVehiclesApiGatewayApplicationTests {
 
 	@Test
 	void contextLoads() {
-		assert(true);
+		assertTrue(true);
 	}
 
 }

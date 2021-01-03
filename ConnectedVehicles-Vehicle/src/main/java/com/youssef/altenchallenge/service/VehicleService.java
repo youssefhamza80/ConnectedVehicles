@@ -78,12 +78,13 @@ public class VehicleService {
 			ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicleId);
 			if (existingVehicle.getStatusCode() == HttpStatus.OK) {
 				vehicle = existingVehicle.getBody();
-				vehicle.setPingDtm(LocalDateTime.now());
-				vehicle = vehicleRepository.save(vehicle);
-				return new ResponseEntity<>(vehicle, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				if (vehicle != null) {
+					vehicle.setPingDtm(LocalDateTime.now());
+					vehicle = vehicleRepository.save(vehicle);
+					return new ResponseEntity<>(vehicle, HttpStatus.OK);
+				}
 			}
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception ex) {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
