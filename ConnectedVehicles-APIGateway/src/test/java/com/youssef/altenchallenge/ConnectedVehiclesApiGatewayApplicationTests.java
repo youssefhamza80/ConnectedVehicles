@@ -8,6 +8,7 @@ class ConnectedVehiclesApiGatewayApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assert(true);
 	}
 
 }

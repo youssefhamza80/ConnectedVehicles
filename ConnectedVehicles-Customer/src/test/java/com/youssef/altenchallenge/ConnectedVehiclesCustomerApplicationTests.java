@@ -8,5 +8,6 @@ class ConnectedVehiclesCustomerApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assert(true);
 	}
 }

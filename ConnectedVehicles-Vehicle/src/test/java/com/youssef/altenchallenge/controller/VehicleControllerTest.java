@@ -2,10 +2,8 @@ package com.youssef.altenchallenge.controller;
 
 import static io.restassured.RestAssured.delete;
 import static io.restassured.RestAssured.get;
-import static io.restassured.RestAssured.put;
 import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.as;
-import static org.hamcrest.CoreMatchers.containsString;
+import static io.restassured.RestAssured.put;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -19,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -33,7 +30,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.youssef.altenchallenge.entity.Customer;
 import com.youssef.altenchallenge.entity.Vehicle;
 import com.youssef.altenchallenge.repository.VehicleRepository;
 import com.youssef.altenchallenge.service.VehicleService;

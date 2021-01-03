@@ -8,9 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.youssef.altenchallenge.entity.Customer;
 import com.youssef.altenchallenge.client.CustomerClient;
 import com.youssef.altenchallenge.configuration.ConfigProperties;
+import com.youssef.altenchallenge.entity.Customer;
 import com.youssef.altenchallenge.entity.Vehicle;
 import com.youssef.altenchallenge.repository.VehicleRepository;
 
