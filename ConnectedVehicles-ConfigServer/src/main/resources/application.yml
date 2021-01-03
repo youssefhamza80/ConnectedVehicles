@@ -1,0 +1,16 @@
+server:
+  port: 9000
+  
+spring:
+  application:
+    name: connected-vehicles-config-server
+  cloud:
+    config:
+      label: main
+      server:
+        git:
+          uri: https://github.com/youssefhamza80/ConnectedVehicles_ConfigRepo.git          
+          force-pull: true
+          clone-on-start: true
+          default-label: main
+          basedir: target/configs
