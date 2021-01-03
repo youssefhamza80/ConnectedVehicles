@@ -15,7 +15,7 @@
 		<sonar.projectKey>youssefhamza80_ConnectedVehicles</sonar.projectKey>
 		<sonar.moduleKey>${artifactId}</sonar.moduleKey>
 		<sonar.coverage.exclusions>jacoco-report/**</sonar.coverage.exclusions>
-		<aggregate.report.dir>../jacoco-report/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
+		<aggregate.report.dir>../ConnectedVehicles-JacocoReport/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
 		<sonar.coverage.jacoco.xmlReportPaths>${basedir}/${aggregate.report.dir} 
 		</sonar.coverage.jacoco.xmlReportPaths>    
 <!--		<sonar.organization>youssefhamza80</sonar.organization>
