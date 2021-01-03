@@ -16,7 +16,7 @@ before_install:
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
     
 script:
-#- cd ConnectedVehicles-APIGateway
+
 - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 - cd ConnectedVehicles-APIGateway
 - docker build -t "$DOCKER_USERNAME"/cv_apigateway:$TRAVIS_BUILD_ID .
@@ -38,19 +38,6 @@ script:
 - docker build -t "$DOCKER_USERNAME"/cv_vehicle:$TRAVIS_BUILD_ID .
 - docker push "$DOCKER_USERNAME"/cv_vehicle:$TRAVIS_BUILD_ID
 
-#- sonar-scanner
-#- cd ../ConnectedVehicles-ConfigServer
-#- mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-#- sonar-scanner
-#- cd ../ConnectedVehicles-Discovery
-#- mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-#- sonar-scanner
-#- cd ../ConnectedVehicles-Customer
-#- mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-#- sonar-scanner
-#- cd ../ConnectedVehicles-Vehicle
-#- mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles
-#- sonar-scanner
 notifications:
   email:
     recipients:
