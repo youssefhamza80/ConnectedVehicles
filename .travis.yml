@@ -13,30 +13,30 @@ services:
   - docker
 
 before_install:
-  - docker login -u=yousifkamal -p=${DOCKER_PASSWORD}
+docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
     
 script:
 #- cd ConnectedVehicles-APIGateway
 - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 - cd ConnectedVehicles-APIGateway
-- docker build -t yousifkamal/cv_apigateway:$TRAVIS_BUILD_ID .
-- docker push yousifkamal/cv_apigateway:$TRAVIS_BUILD_ID
+- docker build -t "$DOCKER_USERNAME"/cv_apigateway:$TRAVIS_BUILD_ID .
+- docker push "$DOCKER_USERNAME"/cv_apigateway:$TRAVIS_BUILD_ID
 
 - cd ../ConnectedVehicles-ConfigServer
-- docker build -t yousifkamal/cv_configserver:$TRAVIS_BUILD_ID .
-- docker push yousifkamal/cv_configserver:$TRAVIS_BUILD_ID
+- docker build -t "$DOCKER_USERNAME"/cv_configserver:$TRAVIS_BUILD_ID .
+- docker push "$DOCKER_USERNAME"/cv_configserver:$TRAVIS_BUILD_ID
 
 - cd ../ConnectedVehicles-Discovery
-- docker build -t yousifkamal/cv_discovery:$TRAVIS_BUILD_ID .
-- docker push yousifkamal/cv_discovery:$TRAVIS_BUILD_ID
+- docker build -t "$DOCKER_USERNAME"/cv_discovery:$TRAVIS_BUILD_ID .
+- docker push "$DOCKER_USERNAME"/cv_discovery:$TRAVIS_BUILD_ID
 
 - cd ../ConnectedVehicles-Customer
-- docker build -t yousifkamal/cv_customer:$TRAVIS_BUILD_ID .
-- docker push yousifkamal/cv_customer:$TRAVIS_BUILD_ID
+- docker build -t "$DOCKER_USERNAME"/cv_customer:$TRAVIS_BUILD_ID .
+- docker push "$DOCKER_USERNAME"/cv_customer:$TRAVIS_BUILD_ID
 
 - cd ../ConnectedVehicles-Vehicle
-- docker build -t yousifkamal/cv_vehicle:$TRAVIS_BUILD_ID .
-- docker push yousifkamal/cv_vehicle:$TRAVIS_BUILD_ID
+- docker build -t "$DOCKER_USERNAME"/cv_vehicle:$TRAVIS_BUILD_ID .
+- docker push "$DOCKER_USERNAME"/cv_vehicle:$TRAVIS_BUILD_ID
 
 #- sonar-scanner
 #- cd ../ConnectedVehicles-ConfigServer
