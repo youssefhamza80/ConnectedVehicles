@@ -14,7 +14,6 @@
 	<properties>
 		<sonar.projectKey>youssefhamza80_ConnectedVehicles</sonar.projectKey>
 		<sonar.moduleKey>${artifactId}</sonar.moduleKey>
-		<sonar.coverage.jacoco.xmlReportPaths>./.coverage/</sonar.coverage.jacoco.xmlReportPaths>
 <!--		<sonar.organization>youssefhamza80</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		-->
@@ -32,5 +31,6 @@
 		<module>ConnectedVehicles-Discovery</module>
 		<module>ConnectedVehicles-Customer</module>
 		<module>ConnectedVehicles-Vehicle</module>
+		<module>ConnectedVehicles-JacocoReport</module>
 	</modules>
 </project>
