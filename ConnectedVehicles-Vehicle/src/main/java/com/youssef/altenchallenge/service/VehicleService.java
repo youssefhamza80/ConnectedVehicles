@@ -76,8 +76,8 @@ public class VehicleService {
 		try {
 			Vehicle vehicle = null;
 			ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicleId);
-			if (existingVehicle.getStatusCode() == HttpStatus.OK && (vehicle = existingVehicle.getBody()) != null) {
-
+			if (existingVehicle.getStatusCode() == HttpStatus.OK) {
+				vehicle = existingVehicle.getBody();
 				vehicle.setPingDtm(LocalDateTime.now());
 				vehicle = vehicleRepository.save(vehicle);
 				return new ResponseEntity<>(vehicle, HttpStatus.OK);

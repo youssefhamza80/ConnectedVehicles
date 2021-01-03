@@ -101,6 +101,14 @@ class VehicleServiceTest {
 		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
 				() -> assertNotNull(actualResponse.getBody()),
 				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
+		
+		when(customerClient.findCustomer(100)).thenReturn(null);
+
+		ResponseEntity<Object> actualResponse2 = vehicleService.insertNewVehicle(newVehicle);
+
+		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse2.getStatusCode()),
+				() -> assertNotNull(actualResponse2.getBody()),
+				() -> assertEquals(expectedResponse.getBody(), actualResponse2.getBody()));
 	};
 
 	@Test
