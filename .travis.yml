@@ -19,24 +19,24 @@ script:
 #- cd ConnectedVehicles-APIGateway
 - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar
 - cd ConnectedVehicles-APIGateway
-- docker build -t "$DOCKER_USERNAME"/cv_apigateway:$TRAVIS_BUILD_ID .
-- docker push "$DOCKER_USERNAME"/cv_apigateway:$TRAVIS_BUILD_ID
+- docker build -t "$DOCKER_USERNAME"/cv_apigateway .
+- docker push "$DOCKER_USERNAME"/cv_apigateway
 
 - cd ../ConnectedVehicles-ConfigServer
-- docker build -t "$DOCKER_USERNAME"/cv_configserver:$TRAVIS_BUILD_ID .
-- docker push "$DOCKER_USERNAME"/cv_configserver:$TRAVIS_BUILD_ID
+- docker build -t "$DOCKER_USERNAME"/cv_configserver .
+- docker push "$DOCKER_USERNAME"/cv_configserver
 
 - cd ../ConnectedVehicles-Discovery
-- docker build -t "$DOCKER_USERNAME"/cv_discovery:$TRAVIS_BUILD_ID .
-- docker push "$DOCKER_USERNAME"/cv_discovery:$TRAVIS_BUILD_ID
+- docker build -t "$DOCKER_USERNAME"/cv_discovery .
+- docker push "$DOCKER_USERNAME"/cv_discovery
 
 - cd ../ConnectedVehicles-Customer
-- docker build -t "$DOCKER_USERNAME"/cv_customer:$TRAVIS_BUILD_ID .
-- docker push "$DOCKER_USERNAME"/cv_customer:$TRAVIS_BUILD_ID
+- docker build -t "$DOCKER_USERNAME"/cv_customer .
+- docker push "$DOCKER_USERNAME"/cv_customer
 
 - cd ../ConnectedVehicles-Vehicle
-- docker build -t "$DOCKER_USERNAME"/cv_vehicle:$TRAVIS_BUILD_ID .
-- docker push "$DOCKER_USERNAME"/cv_vehicle:$TRAVIS_BUILD_ID
+- docker build -t "$DOCKER_USERNAME"/cv_vehicle .
+- docker push "$DOCKER_USERNAME"/cv_vehicle
 
 #- sonar-scanner
 #- cd ../ConnectedVehicles-ConfigServer
