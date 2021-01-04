@@ -40,15 +40,18 @@ class CustomerServiceTest {
 	void whenCallingGetAllCustomers_thenReturnAllCustomers() {
 		List<Customer> expectedCustomers = new ArrayList<>();
 
+		ResponseEntity<List<Customer>> expectedResponse = new ResponseEntity<>(expectedCustomers, HttpStatus.OK);
+
 		expectedCustomers.add(new Customer(1, "Youssef", "Doha Qatar"));
 		expectedCustomers.add(new Customer(2, "Daniel", "Gothenberg Sweden"));
 
 		when(customerRepository.findAll()).thenReturn(expectedCustomers);
 
-		List<Customer> actualCustomers = customerService.findAll();
+		ResponseEntity<List<Customer>> actualResponse = customerService.findAll();
 
-		assertAll(() -> assertNotNull(actualCustomers), () -> assertEquals(2, actualCustomers.size()),
-				() -> assertEquals(expectedCustomers, actualCustomers));
+		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
+				() -> assertEquals(2, actualResponse.getBody().size()),
+				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
 	}
 
 	@Test

@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "yousifkamal/cv_configserver:211706594",
+    "Name": "yousifkamal/cv_configserver",
     "Update": "true"
   },
   "Ports": [

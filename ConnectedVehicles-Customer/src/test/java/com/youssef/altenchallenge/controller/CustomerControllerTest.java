@@ -55,11 +55,11 @@ public class CustomerControllerTest {
 	public void whenCallingGetAllCustomers_thenCorrect() {
 
 		List<Customer> customers = new ArrayList<>();
-
+		ResponseEntity<List<Customer>> expectedResponse = new ResponseEntity<>(customers, HttpStatus.OK);
 		customers.add(new Customer(1, "Youssef", "Doha Qatar"));
 		customers.add(new Customer(2, "Daniel", "Gothenberg Sweden"));
 
-		when(customerService.findAll()).thenReturn(customers);
+		when(customerService.findAll()).thenReturn(expectedResponse);
 
 		get(uri).then().statusCode(HttpStatus.OK.value()).assertThat().body("size()", is(2));
 	}

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -53,12 +54,14 @@ class VehicleServiceTest {
 		expectedVehicles.add(new Vehicle(1, "VIN1", "REGNO1", null));
 		expectedVehicles.add(new Vehicle(2, "VIN2", "REGNO2", null));
 
+		ResponseEntity<List<Vehicle>> expectedResponse = new ResponseEntity<>(expectedVehicles, HttpStatus.OK);
+
 		when(vehicleRepository.findAll()).thenReturn(expectedVehicles);
 
-		List<Vehicle> actualVehicles = vehicleService.findAll();
+		ResponseEntity<List<Vehicle>> actualResponse = vehicleService.findAll();
 
-		assertAll(() -> assertNotNull(actualVehicles), () -> assertEquals(2, actualVehicles.size()),
-				() -> assertEquals(expectedVehicles, actualVehicles));
+		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
+				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
 	}
 
 	@Test
@@ -101,7 +104,7 @@ class VehicleServiceTest {
 		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
 				() -> assertNotNull(actualResponse.getBody()),
 				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
-		
+
 		when(customerClient.findCustomer(100)).thenReturn(null);
 
 		ResponseEntity<Object> actualResponse2 = vehicleService.insertNewVehicle(newVehicle);
@@ -276,14 +279,14 @@ class VehicleServiceTest {
 		Vehicle vehicleToDelete = new Vehicle(1, "VIN1", "UPDATED REG", null);
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
-		when(vehicleRepository.findById(vehicleToDelete.getVehicleId())).thenReturn(Optional.empty());
+		when(vehicleRepository.findById(vehicleToDelete.getVehicleId())).thenReturn(Optional.of(vehicleToDelete));
 
-		when(vehicleRepository.findById(vehicleToDelete.getVehicleId()))
-				.thenThrow(new RuntimeException("Exception while retrieving data from repository"));
+		doThrow(new RuntimeException("Exception while retrieving data from repository")).when(vehicleRepository)
+				.deleteById(vehicleToDelete.getVehicleId());
 
 		ResponseEntity<String> actualResponse = vehicleService.deleteVehicle(vehicleToDelete.getVehicleId());
 
-		assertAll(() -> assertEquals(actualResponse.getStatusCode(), expectedResponse.getStatusCode()),
+		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
 				() -> assertNotNull(actualResponse.getBody()));
 	}
 
@@ -294,7 +297,7 @@ class VehicleServiceTest {
 		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", LocalDateTime.now());
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.of(existingVehicle));
-		
+
 		when(configProperties.getConnectionTimeoutMinutes()).thenReturn(1L);
 
 		ResponseEntity<String> actualResponse = vehicleService

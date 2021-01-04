@@ -33,16 +33,24 @@ public class VehicleService {
 		this.configProperties = configProperties;
 	}
 
-	public List<Vehicle> findAll() {
-		return vehicleRepository.findAll();
+	public ResponseEntity<List<Vehicle>> findAll() {
+		try {
+			return new ResponseEntity<>(vehicleRepository.findAll(), HttpStatus.OK);
+		} catch (Exception ex) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	public ResponseEntity<Vehicle> findByVehicleId(String vehicleId) {
-		Optional<Vehicle> vehicle = vehicleRepository.findById(vehicleId);
-		if (vehicle.isPresent()) {
-			return new ResponseEntity<>(vehicle.get(), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		try {
+			Optional<Vehicle> vehicle = vehicleRepository.findById(vehicleId);
+			if (vehicle.isPresent()) {
+				return new ResponseEntity<>(vehicle.get(), HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception ex) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -118,18 +126,22 @@ public class VehicleService {
 	}
 
 	public ResponseEntity<String> getVehicleConnectionStatus(String vehicleId) {
-		ResponseEntity<Vehicle> vehicleResponse = findByVehicleId(vehicleId);
-		if (vehicleResponse.getStatusCode() == HttpStatus.OK) {
-			Vehicle vehicle = vehicleResponse.getBody();
-			if (vehicle != null) {
-				LocalDateTime pingDtm = vehicle.getPingDtm();
-				if (pingDtm != null && LocalDateTime.now().minusMinutes(configProperties.getConnectionTimeoutMinutes())
-						.compareTo(pingDtm) <= 0) {
-					return new ResponseEntity<>("CONNECTED", HttpStatus.OK);
+		try {
+			ResponseEntity<Vehicle> vehicleResponse = findByVehicleId(vehicleId);
+			if (vehicleResponse.getStatusCode() == HttpStatus.OK) {
+				Vehicle vehicle = vehicleResponse.getBody();
+				if (vehicle != null) {
+					LocalDateTime pingDtm = vehicle.getPingDtm();
+					if (pingDtm != null && LocalDateTime.now()
+							.minusMinutes(configProperties.getConnectionTimeoutMinutes()).compareTo(pingDtm) <= 0) {
+						return new ResponseEntity<>("CONNECTED", HttpStatus.OK);
+					}
 				}
 			}
-		}
 
-		return new ResponseEntity<>("NOT CONNECTED", HttpStatus.OK);
+			return new ResponseEntity<>("NOT CONNECTED", HttpStatus.OK);
+		} catch (Exception ex) {
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

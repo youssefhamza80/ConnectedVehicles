@@ -23,8 +23,12 @@ public class CustomerService {
 		this.customerRepository = customerRepository;
 	}
 
-	public List<Customer> findAll() {
-		return customerRepository.findAll();
+	public ResponseEntity<List<Customer>> findAll() {
+		try {
+			return new ResponseEntity<>(customerRepository.findAll(), HttpStatus.OK);
+		} catch (Exception ex) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	public ResponseEntity<Customer> findById(long id) {

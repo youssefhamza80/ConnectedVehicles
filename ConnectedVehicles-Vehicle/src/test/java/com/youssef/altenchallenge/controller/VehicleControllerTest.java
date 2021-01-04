@@ -62,7 +62,7 @@ public class VehicleControllerTest {
 		vehicles.add(new Vehicle(1, "VIN1", "REGNO1", null));
 		vehicles.add(new Vehicle(2, "VIN2", "REGNO2", null));
 
-		when(vehicleService.findAll()).thenReturn(vehicles);
+		when(vehicleService.findAll()).thenReturn(new ResponseEntity<>(vehicles, HttpStatus.OK));
 
 		get(uri).then().statusCode(HttpStatus.OK.value()).assertThat().body("size()", is(2));
 	}
