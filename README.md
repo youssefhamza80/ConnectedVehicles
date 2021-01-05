@@ -15,7 +15,7 @@ Hereunder, I am going to describe each component of this diagram.
 ### Customer Service
 This REST service is responsible for handling all customer-related CRUD operations. It connects to Customer DB which is a Mongo DB collection hosted on a cluster provided by [Mongo Atlas](https://www.mongodb.com/cloud/atlas). This free NoSQL DB is high available as it's replicated on multiple hosts in the same region. However, more advacened scalability and availability options can be provided with paid plans.
 
-### Customer Data Model
+#### Customer Data Model
 
  1. **Id**: Unique identifier for the customer.
  2. **Name**:  Full customer name.
@@ -36,7 +36,7 @@ Full REST documentation are available [here](http://localhost:7000/connected_veh
 ### Vehicle Service
 This REST service is responsible for handling all vehicle-related CRUD operations. It connects to Vehicle DB which is a Mongo DB collection hosted on a cluster provided by [Mongo Atlas](https://www.mongodb.com/cloud/atlas). This free NoSQL DB is high available as it's replicated on multiple hosts in the same region. However, more advacened scalability and availability options can be provided with paid plans.
 
-### Vehicle Data Model
+#### Vehicle Data Model
 
  1. **Vehicle Id/VIN**: Unique identifier for the vehicle.
  2. **Customer Id**:  Customer Id which links a vehicle object to a customer object . 
@@ -57,6 +57,29 @@ Besides standard CRUD operations, there are additional two operations that are s
 
 Full REST documentation are available [here](http://localhost:7000/connected_vehicles/vehicle/swagger-ui/index.html) - assuming all services are running on localhost with default ports -.
 
+### Discovery/Registry service: 
+This service works as a discovery/registry service. It used to provide a discovery mechanism for any client that needs to communicate to a specific service without needing to know the specific end-point(s) for the target service. Any target service needs to register to this discovery/registry service so that it's accessible by any client.
+
+This discovery service also provides a dashboard with some useful information about registered services and their statuses as shown below.
+
+![Discovery Service Dashboard](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Discovery.JPG?raw=true)
+
+The above dashboard is available [here](http://localhost:8761/) - assuming that all services are running on localhost with default ports -.
+
+### Configuration service:
+To comply with microservices architecture best practices, all services configurations should be centralized and dettached from the services source code. I.e. whenever a service boots up, it should fetch its all related configuration from an external provider. This is the use of this Configuration service.
+To maximize the benefit of this externalized configurations, all services configs are uplaoded and tracked by github [here](https://github.com/youssefhamza80/ConnectedVehicles_ConfigRepo). 
+When this configuration service starts up, it loads all client services (such as Vehicle and Customer services)  from the above github repository.
+When any client service starts up, it will fetch the configurations from this configuration service. For example, Customer service gets its configuration during startup from [this location](http://localhost:9000/connected-vehicles-customer/default) - assuming that all services are running on local host with default ports.   
+ 
+### API Gateway: 
+This service works as a proxy and routing application for the underlying services (such as Customer and Vehicle services). Instead of exposing multiple ports for each service, outside world can communicate only with this API gateway without worrying about implementation details of the actual running services.
+This API gateway communicates with discovery/registry service to get end-points for registered client services. It also provides end-points  to be exposed to the outside-world consumers.
+In this platforms, outside-world consumers are:
+- [ ] **Vehicle Monitoring Web App**: Thi application communicates with the API gateway end-pojnts to extract vehicles and customer related information to be displayed to the user.
+- [ ] **Vehicles**:  Vehicles communicates with the API gateway to provide heartbeats - i.e. pings - to the system and thus vehicles statuses are CONNECTED.
+
+ 
 ## Used Technologies
 
  - **Development framework**: Spring boot version 2.3.7.RELEASE on JDK 11. Spring Boot is a Spring module that is widely used to develop cloud-native applications/services and backed with various integration mechanisms with many cloud applications providers. 
@@ -105,9 +128,6 @@ Build status can be tracker here: [![Build Status](https://travis-ci.com/youssef
 > Service Discovery and Registry service: `docker pull yousifkamal/cv_discovery`
 > API Gateway Service: `docker pull yousifkamal/cv_apigateway`
 > Configuration Server: `docker pull yousifkamal/cv_configserver`
-
-## Documentation
-
 
 >
 >
