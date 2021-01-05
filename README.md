@@ -1,5 +1,3 @@
-# Connected Vehicles Platform
-
 ## Introduction
 
 This platform is used for monitoring vehicles statuses (Connected/Not Connected) via one dashboard. It uses modern software architectural principles and tools to provide a reliable well-built functionalities.
