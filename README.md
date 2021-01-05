@@ -5,7 +5,8 @@
 This platform is used for monitoring vehicles statuses (Connected/Not Connected) via one dashboard. It uses modern software architectural principles and tools to provide a reliable well-built functionalities.
 
 ## Architecture
-![enter image description here](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Architecture.jpg?raw=true)
+![Architecture Diagram](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Architecture.jpg?raw=true)
+>>>>>>> 8e9f720bf08b636e24097c46639429760e42b594
 ## How To Build
 
 ## How To Run
