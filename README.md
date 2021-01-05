@@ -1,3 +1,5 @@
+# Connected Vehicles Platform
+
 ## Introduction
 
 This platform is used for monitoring vehicles statuses (Connected/Not Connected) via one dashboard. It uses modern software architectural principles and tools to provide a reliable well-built functionalities.
@@ -25,7 +27,11 @@ Standard CRUD operations are provided by this REST service:
  3. **Update an existing customer**: PUT method that updates an existing customer data (i.e. modifies Name and/or Address if required).
  4. **Delete an existing customer by Id**: DELETE method that deletes one customer given his/her Id.
 
-Full REST documentation with ability to execute requests are provided by navigating [here](http://localhost:7000/connected_vehicles/customer/swagger-ui/index.html) - assuming  all services run on localhost with default ports -.
+![Customer APIs and data model](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Customer%20APIs.JPG?raw=true)
+
+Full REST documentation are available [here](http://localhost:7000/connected_vehicles/customer/swagger-ui/index.html) - assuming all services are running on localhost with default ports -.
+
+
 
 ### Vehicle Service
 This REST service is responsible for handling all vehicle-related CRUD operations. It connects to Vehicle DB which is a Mongo DB collection hosted on a cluster provided by [Mongo Atlas](https://www.mongodb.com/cloud/atlas). This free NoSQL DB is high available as it's replicated on multiple hosts in the same region. However, more advacened scalability and availability options can be provided with paid plans.
@@ -47,11 +53,31 @@ Besides standard CRUD operations, there are additional two operations that are s
   1. **Get connection status given vehicle Id**: GET method that returns a vehicle connection status (CONNECTED or NOT CONNECTED) given its vehicle Id/VIN.
   2. **Ping using Vehicle Id**: PUT method that updates vehicle object by setting its ping date/time to the ping request date/time. As describe earlier, the ping date/time detremines whether the vehicle is CONNECTED or NOT CONNECTED.
 
-Full REST documentation are provided by navigating [here](http://localhost:7000/connected_vehicles/vehicle/swagger-ui/index.html) - assuming all services run on localhost with default ports -.
+![Vehicle APIs and data model](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Vehicle%20APIs.JPG?raw=true)
 
+Full REST documentation are available [here](http://localhost:7000/connected_vehicles/vehicle/swagger-ui/index.html) - assuming all services are running on localhost with default ports -.
 
-## Technologies
+## Used Technologies
 
+ - **Development framework**: Spring boot version 2.3.7.RELEASE on JDK 11. Spring Boot is a Spring module that is widely used to develop cloud-native applications/services and backed with various integration mechanisms with many cloud applications providers. 
+ - **Software Control Management**: All source code is tracked on Github [here](https://github.com/youssefhamza80/ConnectedVehicles).
+ - **Building framework**: Apache Maven version 3.6.3 is used to build and run automated tests for the project.
+ - **Testing frameworks**: 
+	 - [ ] JUnit 5 framework is used for running unit/integration test suites.
+	 - [ ] RestAssured is used for testing RESTful APIs (controllers). 
+	 - [ ] Mockito is used to mock external dependencies. It's used for REST controllers as well services testing. 
+ - **APIs documentation**: Swagger-UI is used to provide full REST APIs documentation with the ability to execute varioud HTTP methods for each API.
+ - **Code quality analyzers**: 
+     - [ ] SonarLint is used to check the code quality locally. It's useful to make sure that code does not have any quality issues prior to committing/pushing to the SCM repository. 
+     - [ ] SonarCloud is used to check the code quality after it's pushed to remote SCM (Github).
+- **Containerization**: a docker is built and pushed to docker hub remote repository with each code push to github.   
+ - **CI/CD**: Travis CI is used as a pipeline manager to perform the following tasks whenever code is pushed to github repository:
+	  - [ ] Builds the source code using Maven.
+	  - [ ] Runs all defined test cases.
+	  - [ ] Generates code coverage reports - using Jacoco plugin -.
+	  - [ ] Invokes SonarCloud quality checks and publish results to SonarCloud.
+	  - [ ] Buildes Docker images for all services and push them to docker hub remote repository.   
+   
 ## How To Build
 
 
