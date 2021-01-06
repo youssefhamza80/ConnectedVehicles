@@ -1,0 +1,12 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "yousifkamal/cv_customer",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": "8003"
+    }
+  ]  
+}

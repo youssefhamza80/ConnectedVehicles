@@ -1,0 +1,71 @@
+services:
+  gateway:
+    image: yousifkamal/cv_apigateway
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://discovery:8761/eureka
+      spring.cloud.config.uri: http://configserver:9000/
+    ports:
+      - "7000:7000"
+    depends_on:
+      discovery:
+        condition: service_healthy
+      customer:
+        condition: service_healthy
+      vehicle:
+        condition: service_healthy
+    links: 
+      - configserver
+      - discovery     
+  configserver:
+    image: yousifkamal/cv_configserver
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/actuator"]
+      interval: 5s
+      timeout: 2s
+      retries: 10      
+  discovery:
+    image: yousifkamal/cv_discovery
+    environment:
+      spring.cloud.config.uri: http://configserver:9000/
+    ports:
+      - "8761:8761"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8761"]
+      interval: 5s
+      timeout: 2s
+      retries: 10     
+  customer:
+    image: yousifkamal/cv_customer
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://discovery:8761/eureka
+      spring.cloud.config.uri: http://configserver:9000/
+    depends_on:
+      discovery:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8003"]
+      interval: 5s
+      timeout: 2s
+      retries: 10     
+    links: 
+      - configserver
+      - discovery
+  vehicle:
+    image: yousifkamal/cv_vehicle
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://discovery:8761/eureka
+      spring.cloud.config.uri: http://configserver:9000/
+    depends_on:
+      discovery:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8002"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+    links: 
+      - configserver
+      - discovery
