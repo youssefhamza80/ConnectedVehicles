@@ -6,8 +6,17 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.youssef.altenchallenge.configuration.ConfigProperties;
+
 @Document(collection = "Vehicles")
 public class Vehicle {
+
+	public Vehicle() {
+		super();
+		configProperties = new ConfigProperties();
+	}
+
+	private ConfigProperties configProperties;
 
 	@Transient
 	public static final String SEQUENCE_NAME = "vehicles_sequence";
@@ -20,7 +29,18 @@ public class Vehicle {
 	private String regNo;
 
 	private LocalDateTime pingDtm;
-	
+
+	@Transient
+	private String connectionStatus;
+
+	public String getConnectionStatus() {
+		if (pingDtm != null && LocalDateTime.now().minusMinutes(configProperties.getConnectionTimeoutMinutes())
+				.compareTo(pingDtm) <= 0) {
+			return "CONNECTED";
+		}
+		return "NOT CONNECTED";
+	}
+
 	public long getCustomerId() {
 		return customerId;
 	}
@@ -45,16 +65,13 @@ public class Vehicle {
 		this.regNo = regNo;
 	}
 
-	public Vehicle(long customerId, String vin, String regNo, LocalDateTime pingDtm) {
+	public Vehicle(long customerId, String vin, String regNo, LocalDateTime pingDtm, ConfigProperties configProperties) {
 		super();
 		this.customerId = customerId;
 		this.vehicleId = vin;
 		this.regNo = regNo;
 		setPingDtm(pingDtm);
-	}
-
-	public Vehicle() {
-		super();
+		this.configProperties = configProperties;
 	}
 
 	public LocalDateTime getPingDtm() {

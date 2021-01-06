@@ -17,5 +17,6 @@ public class ConfigProperties {
 
 	public ConfigProperties() {
 		super();
+		connectionTimeoutMinutes = 1;
 	}	
 }

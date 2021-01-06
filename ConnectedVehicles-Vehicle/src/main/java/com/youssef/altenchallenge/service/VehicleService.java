@@ -131,11 +131,7 @@ public class VehicleService {
 			if (vehicleResponse.getStatusCode() == HttpStatus.OK) {
 				Vehicle vehicle = vehicleResponse.getBody();
 				if (vehicle != null) {
-					LocalDateTime pingDtm = vehicle.getPingDtm();
-					if (pingDtm != null && LocalDateTime.now()
-							.minusMinutes(configProperties.getConnectionTimeoutMinutes()).compareTo(pingDtm) <= 0) {
-						return new ResponseEntity<>("CONNECTED", HttpStatus.OK);
-					}
+					return new ResponseEntity<>(vehicle.getConnectionStatus(), HttpStatus.OK);
 				}
 			}
 

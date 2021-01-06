@@ -26,10 +26,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.youssef.altenchallenge.configuration.ConfigProperties;
 import com.youssef.altenchallenge.entity.Vehicle;
 import com.youssef.altenchallenge.repository.VehicleRepository;
 import com.youssef.altenchallenge.service.VehicleService;
@@ -42,6 +44,9 @@ public class VehicleControllerTest {
 	private int port;
 
 	private String uri;
+	
+	@MockBean 
+	ConfigProperties configProperties;
 
 	@MockBean
 	VehicleService vehicleService;
@@ -52,6 +57,7 @@ public class VehicleControllerTest {
 	@PostConstruct
 	public void init() {
 		uri = "http://localhost:" + port;
+		when(configProperties.getConnectionTimeoutMinutes()).thenReturn(1L);
 	}
 
 	@Test
@@ -59,8 +65,8 @@ public class VehicleControllerTest {
 
 		List<Vehicle> vehicles = new ArrayList<>();
 
-		vehicles.add(new Vehicle(1, "VIN1", "REGNO1", null));
-		vehicles.add(new Vehicle(2, "VIN2", "REGNO2", null));
+		vehicles.add(new Vehicle(1, "VIN1", "REGNO1", null, configProperties));
+		vehicles.add(new Vehicle(2, "VIN2", "REGNO2", null, configProperties));
 
 		when(vehicleService.findAll()).thenReturn(new ResponseEntity<>(vehicles, HttpStatus.OK));
 
@@ -70,7 +76,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenFindingExistingVehicleStatusIsOKAndBodyIsCorrect() {
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", null, configProperties);
 
 		ResponseEntity<Vehicle> expectedResponse = new ResponseEntity<>(existingVehicle, HttpStatus.OK);
 
@@ -85,7 +91,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenAddingNewVehicleToExistingCustomer_thenStatusIsCreatedAndBodyIsCorrect() {
 
-		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
+		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1", null, configProperties);
 		ResponseEntity<Object> responseEntity = new ResponseEntity<Object>(newVehicle, HttpStatus.CREATED);
 		when(vehicleService.insertNewVehicle((Vehicle) any(Vehicle.class))).thenReturn(responseEntity);
 
@@ -134,7 +140,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenUpdatingExistingVehicleStatusIsOK() {
 
-		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG", null);
+		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG", null, configProperties);
 		ResponseEntity<Object> responseEntity = new ResponseEntity<>(updatedVehicle, HttpStatus.OK);
 
 		when(vehicleService.updateVehicle(any(Vehicle.class))).thenReturn(responseEntity);
@@ -200,7 +206,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenPingingExistingVehicleStatusIsOKAndUpdatedVehicleIsReturned() {
 		LocalDateTime updatedPingDtm = LocalDateTime.now();
-		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "REGNO1", updatedPingDtm);
+		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "REGNO1", updatedPingDtm, configProperties);
 		ResponseEntity<Object> responseEntity = new ResponseEntity<>(updatedVehicle, HttpStatus.OK);
 
 		when(vehicleService.ping("VIN1")).thenReturn(responseEntity);
