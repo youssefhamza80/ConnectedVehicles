@@ -46,7 +46,7 @@ public class VehicleController {
 		return vehicleService.findByVehicleId(vehicleId);
 	}
 
-	@ApiOperation(value = "Ping vehicle using vehicle ID (VIN). This like sending heartbeat message to tell that vehicle is CONNECTED."
+	@ApiOperation(value = "Ping vehicle using vehicle ID (VIN). This is like sending a heartbeat notification to indicate that vehicle is CONNECTED."
 			+ "\r\n If ping was not called for a predefined period of time - defaulted to 1 minutes - then vehicle is considered NOT CONNECTED")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 404, message = "Not Found"),
 			@ApiResponse(code = 500, message = "Internal Server Error") })
