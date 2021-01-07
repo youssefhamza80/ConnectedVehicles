@@ -37,7 +37,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://gateway:7000",
+  "proxy": "http://localhost:7000",
   "devDependencies": {
     "envify": "^4.1.0",
     "rollup-plugin-commonjs": "^10.1.0",
