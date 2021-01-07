@@ -192,7 +192,7 @@ To build and run this solution locally using command line/shell terminal:
  - You can run the solution simply by pulling docker images as follow:
     - **Copy repository to local machine**: `git clone https://github.com/youssefhamza80/ConnectedVehicles.git`
     - **Go to repository root directory**: `cd ConnectedVehicles`
-    - ** Run Docker Compose to bring all services up**: `docker-compose -f .\docker-compose.yml up -d`
+    - **Run Docker Compose to bring all services up**: `docker-compose -f .\docker-compose.yml up -d`
       ![](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Docker%20Up.jpg?raw=true)
 
       After all docker containers are up as per the above screenshot, you can run the monitoring application [here](http://localhost:3000/).
