@@ -39,6 +39,7 @@ script:
 - docker push "$DOCKER_USERNAME"/cv_vehicle
 
 - cd ../ConnectedVehicles-MonitoringDashboard
+- sed -i 's/localhost/gateway/g' package.json
 - docker build -t "$DOCKER_USERNAME"/cv_monitoring_app .
 - docker push "$DOCKER_USERNAME"/cv_monitoring_app
 
