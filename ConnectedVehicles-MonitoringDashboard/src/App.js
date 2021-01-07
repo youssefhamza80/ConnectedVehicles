@@ -98,9 +98,9 @@ export default class App extends Component {
                   Header: "Vehicle ID",
                    id: "vehicleId",
                   accessor: d => d.vehicleId,
-                  filterMethod: (filter, row) =>
-                    row[filter.id].startsWith(filter.value) &&
-                    row[filter.id].endsWith(filter.value)
+                  filterMethod: (filter, rows) =>
+                    matchSorter(rows, filter.value, { keys: ["vehicleId"] }),
+                  filterAll: true
                 },
                 {
                   Header: "Registration No",
