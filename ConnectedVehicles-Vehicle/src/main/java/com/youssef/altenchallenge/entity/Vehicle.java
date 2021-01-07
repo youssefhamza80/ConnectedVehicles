@@ -13,10 +13,7 @@ public class Vehicle {
 
 	public Vehicle() {
 		super();
-		configProperties = new ConfigProperties();
 	}
-
-	private ConfigProperties configProperties;
 
 	@Transient
 	public static final String SEQUENCE_NAME = "vehicles_sequence";
@@ -33,12 +30,13 @@ public class Vehicle {
 	@Transient
 	private String connectionStatus;
 
+	public void setConnectionStatus(String connectionStatus) {
+		this.connectionStatus = connectionStatus;
+	}
+
+	// Move to service
 	public String getConnectionStatus() {
-		if (pingDtm != null && LocalDateTime.now().minusMinutes(configProperties.getConnectionTimeoutMinutes())
-				.compareTo(pingDtm) <= 0) {
-			return "CONNECTED";
-		}
-		return "NOT CONNECTED";
+		return connectionStatus;
 	}
 
 	public long getCustomerId() {
@@ -65,13 +63,12 @@ public class Vehicle {
 		this.regNo = regNo;
 	}
 
-	public Vehicle(long customerId, String vin, String regNo, LocalDateTime pingDtm, ConfigProperties configProperties) {
+	public Vehicle(long customerId, String vin, String regNo, LocalDateTime pingDtm) {
 		super();
 		this.customerId = customerId;
 		this.vehicleId = vin;
 		this.regNo = regNo;
-		setPingDtm(pingDtm);
-		this.configProperties = configProperties;
+		setPingDtm(pingDtm);		
 	}
 
 	public LocalDateTime getPingDtm() {

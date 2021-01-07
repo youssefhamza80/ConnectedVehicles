@@ -65,8 +65,8 @@ public class VehicleControllerTest {
 
 		List<Vehicle> vehicles = new ArrayList<>();
 
-		vehicles.add(new Vehicle(1, "VIN1", "REGNO1", null, configProperties));
-		vehicles.add(new Vehicle(2, "VIN2", "REGNO2", null, configProperties));
+		vehicles.add(new Vehicle(1, "VIN1", "REGNO1", null));
+		vehicles.add(new Vehicle(2, "VIN2", "REGNO2", null));
 
 		when(vehicleService.findAll()).thenReturn(new ResponseEntity<>(vehicles, HttpStatus.OK));
 
@@ -76,7 +76,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenFindingExistingVehicleStatusIsOKAndBodyIsCorrect() {
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", null, configProperties);
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
 
 		ResponseEntity<Vehicle> expectedResponse = new ResponseEntity<>(existingVehicle, HttpStatus.OK);
 
@@ -91,7 +91,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenAddingNewVehicleToExistingCustomer_thenStatusIsCreatedAndBodyIsCorrect() {
 
-		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1", null, configProperties);
+		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
 		ResponseEntity<Object> responseEntity = new ResponseEntity<Object>(newVehicle, HttpStatus.CREATED);
 		when(vehicleService.insertNewVehicle((Vehicle) any(Vehicle.class))).thenReturn(responseEntity);
 
@@ -140,7 +140,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenUpdatingExistingVehicleStatusIsOK() {
 
-		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG", null, configProperties);
+		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG", null);
 		ResponseEntity<Object> responseEntity = new ResponseEntity<>(updatedVehicle, HttpStatus.OK);
 
 		when(vehicleService.updateVehicle(any(Vehicle.class))).thenReturn(responseEntity);
@@ -206,7 +206,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenPingingExistingVehicleStatusIsOKAndUpdatedVehicleIsReturned() {
 		LocalDateTime updatedPingDtm = LocalDateTime.now();
-		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "REGNO1", updatedPingDtm, configProperties);
+		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "REGNO1", updatedPingDtm);
 		ResponseEntity<Object> responseEntity = new ResponseEntity<>(updatedVehicle, HttpStatus.OK);
 
 		when(vehicleService.ping("VIN1")).thenReturn(responseEntity);

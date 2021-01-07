@@ -19,11 +19,11 @@ import feign.FeignException;
 @Service
 public class VehicleService {
 
+	private final ConfigProperties configProperties;
+
 	private final VehicleRepository vehicleRepository;
 
 	private final CustomerClient customerClient;
-
-	private final ConfigProperties configProperties;
 
 	public VehicleService(VehicleRepository vehicleRepository, CustomerClient customerClient,
 			ConfigProperties configProperties) {
@@ -33,9 +33,22 @@ public class VehicleService {
 		this.configProperties = configProperties;
 	}
 
+	private void setVehicleConnectionStatus(Vehicle vehicle) {
+		if (vehicle.getPingDtm() != null && LocalDateTime.now()
+				.minusMinutes(configProperties.getConnectionTimeoutMinutes()).compareTo(vehicle.getPingDtm()) <= 0) {
+			vehicle.setConnectionStatus("CONNECTED");
+		} else {
+			vehicle.setConnectionStatus("NOT CONNECTED");
+		}
+	}
+
 	public ResponseEntity<List<Vehicle>> findAll() {
 		try {
-			return new ResponseEntity<>(vehicleRepository.findAll(), HttpStatus.OK);
+			List<Vehicle> vehicles = vehicleRepository.findAll();
+			
+			vehicles.forEach(vehicleObj -> setVehicleConnectionStatus(vehicleObj));
+			
+			return new ResponseEntity<>(vehicles, HttpStatus.OK);
 		} catch (Exception ex) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -45,6 +58,7 @@ public class VehicleService {
 		try {
 			Optional<Vehicle> vehicle = vehicleRepository.findById(vehicleId);
 			if (vehicle.isPresent()) {
+				setVehicleConnectionStatus(vehicle.get());
 				return new ResponseEntity<>(vehicle.get(), HttpStatus.OK);
 			} else {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);

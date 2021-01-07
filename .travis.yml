@@ -38,6 +38,10 @@ script:
 - docker build -t "$DOCKER_USERNAME"/cv_vehicle .
 - docker push "$DOCKER_USERNAME"/cv_vehicle
 
+- cd ../ConnectedVehicles-MonitoringDashboard
+- docker build -t "$DOCKER_USERNAME"/cv_monitoring_app .
+- docker push "$DOCKER_USERNAME"/cv_monitoring_app
+
 #- sonar-scanner
 #- cd ../ConnectedVehicles-ConfigServer
 #- mvn clean -DskipTests org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=youssefhamza80_ConnectedVehicles

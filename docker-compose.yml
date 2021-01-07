@@ -1,4 +1,11 @@
 services:
+  monitoringapp:
+    image: yousifkamal/cv_monitoring_app
+    ports:
+      - "3000:3000"
+    stdin_open: true     
+    links:
+      - gateway
   gateway:
     image: yousifkamal/cv_apigateway
     environment:
