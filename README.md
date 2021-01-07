@@ -1,3 +1,5 @@
+
+
 # Connected Vehicles Platform
 
 ## Introduction
@@ -8,11 +10,11 @@ The vehicles send the status of the connection - ping/heartbeat - one time per m
 ## Requirements
 1. Web GUI (Single Page Application Framework/Platform).
 
- - An overview of all vehicles should be visible on one page (full-screen display), together with their status.
+   - An overview of all vehicles should be visible on one page (full-screen display), together with their status.
 
- - It should be able to filter, to only show vehicles for a specific customer.
+   - It should be able to filter, to only show vehicles for a specific customer.
 
- - It should be able to filter, to only show vehicles that have a specific status.
+   - It should be able to filter, to only show vehicles that have a specific status.
 
 2. Random simulation to vehicles status sending.
 
@@ -35,21 +37,24 @@ The vehicles send the status of the connection - ping/heartbeat - one time per m
 ## Solution Description
 This solution make use of modern microservices architecture principles. It is designed to achieve cloud-native scalability and high availability with minimal efforts. Below I am going to demonstrate different aspects of the solution.
 
-## Architecture
+## Architecture Diagram
 ![Architecture Diagram](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Architecture.jpg?raw=true)
 
 
-As per the above architecture, there are 5 backend microservices; including API gateway service which works as the edge service in this solution to be called by the outside world (i.e. front end application).
-There's one monitoring application as required to view statuses of all vehicles in the system.
+As per the above architecture, there are 5 backend microservices including API gateway service which works as the edge service in this solution to be called by the outside world (i.e. front end application).
+There's one front-end monitoring application to view statuses of all vehicles in the system.
+Each vehicle can communicate individually with the backend via the API Gateway service to send ping requests. 
 
-Hereunder, I am going to desribce all components listed in the above architecture in details.
+Hereunder, I am going to describe all components listed in the above architecture in details.
+
+Prior to reading the below sections, it is highly recommended that you run the solution in order to nagivate URLs and explore implemented services interactively.
 
 ### Customer Service
 This REST service is responsible for handling all customer-related CRUD operations. It connects to a Customer DB which is a Mongo DB collection hosted on a cluster provided by [Mongo Atlas](https://www.mongodb.com/cloud/atlas). This free NoSQL DB is high available as it's replicated on multiple hosts in the same region. However, more advacened scalability and availability options can be provided with paid plans.
 
 #### Customer Data Model
 
- 1. **Id**: Unique identifier for the customer.
+ 1. **Id**: Unique identifier of the customer.
  2. **Name**:  Full customer name.
  3. **Address**: Customer address.
 
@@ -68,8 +73,8 @@ This REST service is responsible for handling all vehicle-related CRUD operation
 
 #### Vehicle Data Model
 
- 1. **Vehicle Id/VIN**: Unique identifier for the vehicle.
- 2. **Customer Id**:  Customer Id which links a vehicle object to a customer object . 
+ 1. **Vehicle Id/VIN**: Unique identifier of the vehicle.
+ 2. **Customer Id**:  Customer Id which links a vehicle object to a customer object. Since this is a NoSQL DB, handling primary/foreign key consistency is done on code level not DB level.
  3. **Registration Number**: Vehicle registration number.
  4. **Ping Date/Time**:  The last ping date/time sent by the vehicle. It is used to detremine connection status with the vehicle. If it is less than the pre-defined duration (defaulted to 1 minute), then connection status is CONNECTED. Otherwise, connection status is NOT CONNECTED.
  5. **Connection Status**: This is a String field to represent "CONNECTED" or "NOT CONNECTED". This field is not stored in the DB and being computed everytime a vehicle is queried by the REST APIs.
@@ -93,7 +98,7 @@ This service works as a discovery/registry service. It used to provide a discove
 
 This discovery service also provides a dashboard with some useful information about registered services and their statuses as shown below.
 
-I am using [Netflix Eureka](https://github.com/Netflix/eureka) as registry/discovery server.
+[Netflix Eureka](https://github.com/Netflix/eureka) is used as registry/discovery server for this solution.
 
 ![Discovery Service Dashboard](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Discovery.JPG?raw=true)
 
@@ -113,10 +118,12 @@ In this platforms, outside-world consumers are:
 - [ ] **Vehicle Monitoring Web App**: This application communicates with the API gateway end-pojnts to extract vehicles and customer related information to be displayed to the user.
 - [ ] **Vehicles**:  Vehicles communicates with the API gateway to provide heartbeats - i.e. pings - to the system and thus vehicles statuses are CONNECTED.
 
+[Netflix Zuul](https://github.com/Netflix/zuul) is used as the API gateway for this solution.
+
 ### Vehicle Monitoring Web App:
 This web application is the front-end part of the solution. [React JS](https://reactjs.org/) framework is used for UI development.
 
-![Screenshot](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/MonitoringApp.JPG) 
+![Screenshot](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/MonitoringApp.JPG?raw=true) 
  
  You can run the application [here](http://localhost:3000/) assuming that all services are running on local host with default ports.
  
@@ -139,43 +146,105 @@ This web application is the front-end part of the solution. [React JS](https://r
  - **Code quality analyzers**: 
      - [ ] [SonarLint ](https://www.sonarlint.org/) is used to check the code quality locally. That is to make sure that local source code does not have any quality issues prior to committing/pushing to the SCM repository. 
      - [ ] [SonarCloud ](https://sonarcloud.io/) is used to check source code quality after it's pushed to remote SCM (Github).
+     
+SonarCloud code quality analysis reports and statistics can be tracked using the below links:[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=alert_status)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=coverage)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=ncloc)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=security_rating)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=code_smells)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)
+
+
 - **Containerization**: [Docker ](https://www.docker.com/) is used to build and push services images to [Docker hub repository](https://hub.docker.com/) with each code push to github. This facilitates easy deployment on any machine that have Docker installed.
-  
- - **CI/CD**: [Travis CI](https://travis-ci.com/) is used as a continuous integration plaftorm. It performs the following tasks whenever new code is pushed to [project github repository](https://github.com/youssefhamza80/ConnectedVehicles):
+
+  All services are dockarized with each build and images are pushed automatically to [Docker Hub](https://hub.docker.com/).
+  Docker images can be pulled to local machine using the following commands:
+  **Vehicle Service**: 
+  `docker pull yousifkamal/cv_vehicle`
+  **Customer Service**: 
+  `docker pull yousifkamal/cv_customer`
+  **Service Discovery and Registry service**: 
+  `docker pull yousifkamal/cv_discovery`
+  **API Gateway Service**: 
+  `docker pull yousifkamal/cv_apigateway`
+  **Configuration Server**: 
+  `docker pull yousifkamal/cv_configserver`
+  **Front-end Vehicle Monitoring Application**: 
+  `docker pull yousifkamal/cv_monitoring_app`
+
+
+ - **CI/CD**: [Travis CI](https://travis-ci.com/) is used as a continuous integration plaftorm. It performs the following tasks whenever new code is pushed to [github repository](https://github.com/youssefhamza80/ConnectedVehicles):
 	  - [ ] Builds the source code using Maven.
 	  - [ ] Runs all defined unit/integration test cases.
 	  - [ ] Generates code coverage reports - using [Jacoco Maven plugin](https://www.eclemma.org/jacoco/trunk/doc/maven.html)-.
-	  - [ ] Invokes SonarCloud quality checks and publish results to SonarCloud.
+	  - [ ] Invokes SonarCloud code quality checks and publish results to SonarCloud.
 	  - [ ] Buildes Docker images for all services and push them to docker hub remote repository.   
+
+    Lat build status can be tracked here: [![Build Status](https://travis-ci.com/youssefhamza80/ConnectedVehicles.svg?branch=main)](https://travis-ci.com/youssefhamza80/ConnectedVehicles)
    
 ## How To Build
 
+To build and run this solution locally using command line/shell terminal:
+- **Pre-requisites**: [git](https://git-scm.com/downloads), [Maven](https://maven.apache.org/download.cgi), and [yarn](https://classic.yarnpkg.com/en/docs/install) tools are installed.
 
+- **Steps to build**:
+  - Copy repository to local machine: `git clone https://github.com/youssefhamza80/ConnectedVehicles.git`
+  - Go to repository root directory: `cd ConnectedVehicles`
+  - Run Maven to build all backend services: `mvn clean install`
+ 
 ## How To Run
+ 
+ - You can run the solution simply by pulling docker images as follow:
+    - **Copy repository to local machine**: `git clone https://github.com/youssefhamza80/ConnectedVehicles.git`
+    - **Go to repository root directory**: `cd ConnectedVehicles`
+    - ** Run Docker Compose to bring all services up**: `docker-compose -f .\docker-compose.yml up -d`
+      ![](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Docker%20Up.jpg?raw=true)
+
+      After all docker containers are up as per the above screenshot, you can run the monitoring application [here](http://localhost:3000/).
+
+2. You can run the project by starting up spring boot services using command line/shell with the following sequence:
+     1. **Config server**: 
+      `cd ConnectedVehicles-ConfigServer` 
+      `mvn spring-boot:run`
+     2. **Discovery/Registry server**:
+	 `cd ../ConnectedVehicles-Discovery`
+	 `mvn spring-boot:run`
+     3. **Vehicle service**:
+	 `cd ../ConnectedVehicles-Vehicle`
+	 `mvn spring-boot:run`
+     4. **Customer service**:
+	 `cd ../ConnectedVehicles-Vehicle`
+	 `mvn spring-boot:run`
+     5. **API gateway**:
+     `cd ../ConnectedVehicles-APIGateway`
+     `mvn spring-boot:run`
+     6. To startup the web application:
+     `cd ../ConnectedVehicles-MonitoringDashboard`
+     `yarn`
+     `yarn start`
+	 Application default URL is: [http://localhost:3000/](http://localhost:3000/)
+
+To simulate vehicle status sending, you can place a ping request using vehicle Id using this [link](http://localhost:7000/connected_vehicles/vehicle/swagger-ui/index.html#/Vehicle%20Controller/pingUsingPUT). Or you may use [Postman](https://www.postman.com/downloads/) to place a PUT request on this url: http://localhost:7000/connected_vehicles/vehicle/ping/{vehicleId}
+
+***Note***: The monitoring application refreshes automatically every 5 seconds. So, after ***ping*** request is received, vehicle status will become ***"CONNECTED"*** until 1 minute is elapsed, afterwards status will become ***"NOT CONNECTED"*** until another ***ping*** request is received.
 
 
-## Code Quality
->[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=alert_status)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)
->[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=coverage)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)
->[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=ncloc)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)
->[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)
->[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=security_rating)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)
->[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)
->[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=code_smells)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)
+## Deployment On Public Clouds
+It is highly recommended to deploy all services on public cloud to leverage to leverage the great scalability and availability provided by global privders such as Amazon AWS, Microsoft Azure, and Google Cloud Platform.
 
-## Continuous Integration
+As a proof of concept, I have deployed the configuration server as a dockarizedimage on AWS Elastic Beanstalk. With just simple parameters and configurations, application has been deployed successfully on the AWS cloud with many useful and powerful features, such as:
+- Load balancer "ELB" has been allocated automatically.
+- Auto scaling group has been defined automatically.
+- Security group has been defined automatically.
+- EC2 instance(s) are allocated automatically.
 
-> Project is built continuously using [Travis CI](https://travis-ci.com/).
-Build status can be tracker here: [![Build Status](https://travis-ci.com/youssefhamza80/ConnectedVehicles.svg?branch=main)](https://travis-ci.com/youssefhamza80/ConnectedVehicles)
+![enter image description here](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/AWS%20Elastic%20Beanstalk.png?raw=true)
 
-> All services are dockarized with each build and images are pushed automatically to [Docker Hub](https://hub.docker.com/).
-> Images can be pulled to local machine using the following commands:
-> Vehicle Service: `docker pull yousifkamal/cv_vehicle`
-> Customer Service: `docker pull yousifkamal/cv_customer`
-> Service Discovery and Registry service: `docker pull yousifkamal/cv_discovery`
-> API Gateway Service: `docker pull yousifkamal/cv_apigateway`
-> Configuration Server: `docker pull yousifkamal/cv_configserver`
+I have shutdown the application on AWS so that I won't be charged. However, I can turn it on and send you the URL if needed.
 
->
->
-> Written with [StackEdit](https://stackedit.io/)
+Of course, there are many other usedul services on AWS and other public clouds that can fulfill this solution needs. For example, AWS Dynamo DB could be used instead of Mongo DB.
+Also, PING can be deployed as a separate service using AWS lambda serverless architecture. This may help for saving costs as billing will be based on number of calls instead of server UP time.
+
+
+
+
+
+
+
+<br><br><br><br>
+>Written with [StackEdit](https://stackedit.io/)
