@@ -2,18 +2,50 @@
 
 ## Introduction
 
-This platform is used for monitoring vehicles statuses (Connected/Not Connected) via one dashboard. It uses modern software architectural principles and tools to provide a reliable well-built functionalities.
+It is required to design and implement vehicle connectivity monitoring dashboard platform. There are a number of connected vehicles that belongs to a number of customers and it is needed to view the status of the connection for these vehicles on a monitoring display.
+The vehicles send the status of the connection - ping/heartbeat - one time per minute. If the heartbear was not received by the vehicle for more than 1 minute, it means no connection.
+
+## Requirements
+1. Web GUI (Single Page Application Framework/Platform).
+
+ - An overview of all vehicles should be visible on one page (full-screen display), together with their status.
+
+ - It should be able to filter, to only show vehicles for a specific customer.
+
+ - It should be able to filter, to only show vehicles that have a specific status.
+
+2. Random simulation to vehicles status sending.
+
+3. If database design will consume a lot of time, use data in-memory representation.
+
+4. Unit Testing.
+
+5. .NET Core, Java or any native language.
+
+6. Complete analysis for the problem.
+
+ - Full architectural sketch to solution.
+
+ - Analysis behind the solution design, technologies,....
+
+ - How the solution will make use of cloud.
+
+ - Deployment steps.
+
+## Solution Description
+This solution make use of modern microservices architecture principles. It is designed to achieve cloud-native scalability and high availability with minimal efforts. Below I am going to demonstrate different aspects of the solution.
 
 ## Architecture
 ![Architecture Diagram](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Architecture.jpg?raw=true)
 
-## Solution Description
-This solution make use of modern microservices architecture principles. It is designed to achieve cloud-native scalability and high availability with minimal efforts.
 
-Hereunder, I am going to describe each component of this diagram.
+As per the above architecture, there are 5 backend microservices; including API gateway service which works as the edge service in this solution to be called by the outside world (i.e. front end application).
+There's one monitoring application as required to view statuses of all vehicles in the system.
+
+Hereunder, I am going to desribce all components listed in the above architecture in details.
 
 ### Customer Service
-This REST service is responsible for handling all customer-related CRUD operations. It connects to Customer DB which is a Mongo DB collection hosted on a cluster provided by [Mongo Atlas](https://www.mongodb.com/cloud/atlas). This free NoSQL DB is high available as it's replicated on multiple hosts in the same region. However, more advacened scalability and availability options can be provided with paid plans.
+This REST service is responsible for handling all customer-related CRUD operations. It connects to a Customer DB which is a Mongo DB collection hosted on a cluster provided by [Mongo Atlas](https://www.mongodb.com/cloud/atlas). This free NoSQL DB is high available as it's replicated on multiple hosts in the same region. However, more advacened scalability and availability options can be provided with paid plans.
 
 #### Customer Data Model
 
@@ -29,9 +61,7 @@ Standard CRUD operations are provided by this REST service:
 
 ![Customer APIs and data model](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Customer%20APIs.JPG?raw=true)
 
-Full REST documentation are available [here](http://localhost:7000/connected_vehicles/customer/swagger-ui/index.html) - assuming all services are running on localhost with default ports -.
-
-
+Full REST documentation is available [here](http://localhost:7000/connected_vehicles/customer/swagger-ui/index.html) - assuming all services are running on localhost with default ports -.
 
 ### Vehicle Service
 This REST service is responsible for handling all vehicle-related CRUD operations. It connects to Vehicle DB which is a Mongo DB collection hosted on a cluster provided by [Mongo Atlas](https://www.mongodb.com/cloud/atlas). This free NoSQL DB is high available as it's replicated on multiple hosts in the same region. However, more advacened scalability and availability options can be provided with paid plans.
@@ -42,7 +72,8 @@ This REST service is responsible for handling all vehicle-related CRUD operation
  2. **Customer Id**:  Customer Id which links a vehicle object to a customer object . 
  3. **Registration Number**: Vehicle registration number.
  4. **Ping Date/Time**:  The last ping date/time sent by the vehicle. It is used to detremine connection status with the vehicle. If it is less than the pre-defined duration (defaulted to 1 minute), then connection status is CONNECTED. Otherwise, connection status is NOT CONNECTED.
-
+ 5. **Connection Status**: This is a String field to represent "CONNECTED" or "NOT CONNECTED". This field is not stored in the DB and being computed everytime a vehicle is queried by the REST APIs.
+   
 Standard CRUD operations are provided by this REST service:
  1. **Query all vehicles**: GET method that returns all available vehicles in the DB.
  2. **Query a specific vehicle by Vehicle Id**: GET method that returns a specific vehicle data using Vehicle Id.
@@ -51,16 +82,18 @@ Standard CRUD operations are provided by this REST service:
 
 Besides standard CRUD operations, there are additional two operations that are specific to this platform.
   1. **Get connection status given vehicle Id**: GET method that returns a vehicle connection status (CONNECTED or NOT CONNECTED) given its vehicle Id/VIN.
-  2. **Ping using Vehicle Id**: PUT method that updates vehicle object by setting its ping date/time to the ping request date/time. As describe earlier, the ping date/time detremines whether the vehicle is CONNECTED or NOT CONNECTED.
+  2. **Ping using Vehicle Id**: PUT method that updates vehicle object by setting its ping date/time to the ping request date/time. As described above, the ping date/time detremines whether the vehicle is CONNECTED or NOT CONNECTED.
 
 ![Vehicle APIs and data model](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Vehicle%20APIs.JPG?raw=true)
 
-Full REST documentation are available [here](http://localhost:7000/connected_vehicles/vehicle/swagger-ui/index.html) - assuming all services are running on localhost with default ports -.
+Full REST documentation is available [here](http://localhost:7000/connected_vehicles/vehicle/swagger-ui/index.html) - assuming all services are running on localhost with default ports -.
 
-### Discovery/Registry service: 
+### Registry/Discovery service: 
 This service works as a discovery/registry service. It used to provide a discovery mechanism for any client that needs to communicate to a specific service without needing to know the specific end-point(s) for the target service. Any target service needs to register to this discovery/registry service so that it's accessible by any client.
 
 This discovery service also provides a dashboard with some useful information about registered services and their statuses as shown below.
+
+I am using [Netflix Eureka](https://github.com/Netflix/eureka) as registry/discovery server.
 
 ![Discovery Service Dashboard](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/Discovery.JPG?raw=true)
 
@@ -68,36 +101,50 @@ The above dashboard is available [here](http://localhost:8761/) - assuming that 
 
 ### Configuration service:
 To comply with microservices architecture best practices, all services configurations should be centralized and dettached from the services source code. I.e. whenever a service boots up, it should fetch its all related configuration from an external provider. This is the use of this Configuration service.
-To maximize the benefit of this externalized configurations, all services configs are uplaoded and tracked by github [here](https://github.com/youssefhamza80/ConnectedVehicles_ConfigRepo). 
+To maximize the benefit of this externalized configurations, all services configs for this solution are uplaoded and tracked by github [here](https://github.com/youssefhamza80/ConnectedVehicles_ConfigRepo). 
 When this configuration service starts up, it loads all client services (such as Vehicle and Customer services)  from the above github repository.
-When any client service starts up, it will fetch the configurations from this configuration service. For example, Customer service gets its configuration during startup from [this location](http://localhost:9000/connected-vehicles-customer/default) - assuming that all services are running on local host with default ports.   
+When any client service starts up, it will fetch the configurations from this configuration service. For example, Customer service fetches its configuration during startup from [here](http://localhost:9000/connected-vehicles-customer/default) - assuming that all services are running on local host with default ports.   
  
 ### API Gateway: 
-This service works as a proxy and routing application for the underlying services (such as Customer and Vehicle services). Instead of exposing multiple ports for each service, outside world can communicate only with this API gateway without worrying about implementation details of the actual running services.
-This API gateway communicates with discovery/registry service to get end-points for registered client services. It also provides end-points  to be exposed to the outside-world consumers.
+This service works as a proxy, edge service and routing application for the underlying services (such as Customer and Vehicle services). Instead of exposing diffirent ports for each service, outside world can communicate only with this API gateway without worrying about implementation details of the actual running services. This gives us flexibility when it comes to developing new services or changing the underlying codebase structure.
+This API gateway communicates with discovery/registry service to get end-points for registered client services. It also provides unified end-points to be exposed to the outside-world consumers.
+
 In this platforms, outside-world consumers are:
-- [ ] **Vehicle Monitoring Web App**: Thi application communicates with the API gateway end-pojnts to extract vehicles and customer related information to be displayed to the user.
+- [ ] **Vehicle Monitoring Web App**: This application communicates with the API gateway end-pojnts to extract vehicles and customer related information to be displayed to the user.
 - [ ] **Vehicles**:  Vehicles communicates with the API gateway to provide heartbeats - i.e. pings - to the system and thus vehicles statuses are CONNECTED.
 
+### Vehicle Monitoring Web App:
+This web application is the front-end part of the solution. [React JS](https://reactjs.org/) framework is used for UI development.
+
+![Screenshot](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/MonitoringApp.JPG) 
+ 
+ You can run the application [here](http://localhost:3000/) assuming that all services are running on local host with default ports.
  
 ## Used Technologies
 
- - **Development framework**: Spring boot version 2.3.7.RELEASE on JDK 11. Spring Boot is a Spring module that is widely used to develop cloud-native applications/services and backed with various integration mechanisms with many cloud applications providers. 
- - **Software Control Management**: All source code is tracked on Github [here](https://github.com/youssefhamza80/ConnectedVehicles).
- - **Building framework**: Apache Maven version 3.6.3 is used to build and run automated tests for the project.
+ - **Development framework**: [Spring boot](https://spring.io/projects/spring-boot) is used for all backend services development. Spring Boot is a [Spring](https://spring.io/) module that is widely used to develop cloud-native applications/services. It's backed with various integration mechanisms with many cloud applications providers - such as [Netflix cloud framework](https://spring.io/projects/spring-cloud-netflix) -. 
+
+ - **Software Control Management**: 
+   - Source code is tracked on Github repository [here](https://github.com/youssefhamza80/ConnectedVehicles).
+   - Services configurations are published on Github repository [here](https://github.com/youssefhamza80/ConnectedVehicles_ConfigRepo).
+   
+ - **Building framework**: [Apache Maven](https://maven.apache.org/) is used to build and run automated tests for the project.
  - **Testing frameworks**: 
-	 - [ ] JUnit 5 framework is used for running unit/integration test suites.
-	 - [ ] RestAssured is used for testing RESTful APIs (controllers). 
-	 - [ ] Mockito is used to mock external dependencies. It's used for REST controllers as well services testing. 
- - **APIs documentation**: Swagger-UI is used to provide full REST APIs documentation with the ability to execute varioud HTTP methods for each API.
+	 - [ ] [JUnit 5](https://junit.org/junit5/) framework is used for running unit/integration test suites.
+	 - [ ] [RestAssured framework ](https://rest-assured.io/)is used for testing RESTful APIs controllers. 
+	 - [ ] [Mockito framework](https://site.mockito.org/) is used to mock external dependencies. It's used for REST controllers as well services testing. 
+	 
+ - **REST APIs documentation**: [Swagger-UI](https://swagger.io/tools/swagger-ui/) is used to provide full REST APIs documentation with the ability to execute varioud HTTP methods for each API.
+
  - **Code quality analyzers**: 
-     - [ ] SonarLint is used to check the code quality locally. It's useful to make sure that code does not have any quality issues prior to committing/pushing to the SCM repository. 
-     - [ ] SonarCloud is used to check the code quality after it's pushed to remote SCM (Github).
-- **Containerization**: a docker is built and pushed to docker hub remote repository with each code push to github.   
- - **CI/CD**: Travis CI is used as a pipeline manager to perform the following tasks whenever code is pushed to github repository:
+     - [ ] [SonarLint ](https://www.sonarlint.org/) is used to check the code quality locally. That is to make sure that local source code does not have any quality issues prior to committing/pushing to the SCM repository. 
+     - [ ] [SonarCloud ](https://sonarcloud.io/) is used to check source code quality after it's pushed to remote SCM (Github).
+- **Containerization**: [Docker ](https://www.docker.com/) is used to build and push services images to [Docker hub repository](https://hub.docker.com/) with each code push to github. This facilitates easy deployment on any machine that have Docker installed.
+  
+ - **CI/CD**: [Travis CI](https://travis-ci.com/) is used as a continuous integration plaftorm. It performs the following tasks whenever new code is pushed to [project github repository](https://github.com/youssefhamza80/ConnectedVehicles):
 	  - [ ] Builds the source code using Maven.
-	  - [ ] Runs all defined test cases.
-	  - [ ] Generates code coverage reports - using Jacoco plugin -.
+	  - [ ] Runs all defined unit/integration test cases.
+	  - [ ] Generates code coverage reports - using [Jacoco Maven plugin](https://www.eclemma.org/jacoco/trunk/doc/maven.html)-.
 	  - [ ] Invokes SonarCloud quality checks and publish results to SonarCloud.
 	  - [ ] Buildes Docker images for all services and push them to docker hub remote repository.   
    
