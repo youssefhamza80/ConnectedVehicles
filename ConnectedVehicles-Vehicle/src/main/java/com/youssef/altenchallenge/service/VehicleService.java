@@ -1,6 +1,6 @@
 package com.youssef.altenchallenge.service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,8 +34,9 @@ public class VehicleService {
 	}
 
 	private void setVehicleConnectionStatus(Vehicle vehicle) {
-		if (vehicle.getPingDtm() != null && LocalDateTime.now()
-				.minusMinutes(configProperties.getConnectionTimeoutMinutes()).compareTo(vehicle.getPingDtm()) <= 0) {
+		if (vehicle.getPingDtm() != null
+				&& Instant.now().minusSeconds(60 * configProperties.getConnectionTimeoutMinutes())
+						.compareTo(vehicle.getPingDtm()) <= 0) {
 			vehicle.setConnectionStatus("CONNECTED");
 		} else {
 			vehicle.setConnectionStatus("NOT CONNECTED");
@@ -45,9 +46,9 @@ public class VehicleService {
 	public ResponseEntity<List<Vehicle>> findAll() {
 		try {
 			List<Vehicle> vehicles = vehicleRepository.findAll();
-			
-			vehicles.forEach(vehicleObj -> setVehicleConnectionStatus(vehicleObj));
-			
+
+			vehicles.forEach(this::setVehicleConnectionStatus);
+
 			return new ResponseEntity<>(vehicles, HttpStatus.OK);
 		} catch (Exception ex) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -85,6 +86,7 @@ public class VehicleService {
 						HttpStatus.BAD_REQUEST);
 			}
 			vehicle = vehicleRepository.save(vehicle);
+			setVehicleConnectionStatus(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
 		} catch (FeignException feignEx) {
 			return new ResponseEntity<>("Error while retrieving customer data." + feignEx.getMessage(),
@@ -101,8 +103,9 @@ public class VehicleService {
 			if (existingVehicle.getStatusCode() == HttpStatus.OK) {
 				vehicle = existingVehicle.getBody();
 				if (vehicle != null) {
-					vehicle.setPingDtm(LocalDateTime.now());
+					vehicle.setPingDtm(Instant.now());
 					vehicle = vehicleRepository.save(vehicle);
+					setVehicleConnectionStatus(vehicle);
 					return new ResponseEntity<>(vehicle, HttpStatus.OK);
 				}
 			}
@@ -119,6 +122,7 @@ public class VehicleService {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
 			vehicle = vehicleRepository.save(vehicle);
+			setVehicleConnectionStatus(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.OK);
 		} catch (Exception ex) {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

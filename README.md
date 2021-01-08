@@ -1,11 +1,12 @@
 
 
+
 # Connected Vehicles Platform
 
 ## Introduction
 
 It is required to design and implement vehicle connectivity monitoring dashboard platform. There are a number of connected vehicles that belongs to a number of customers and it is needed to view the status of the connection for these vehicles on a monitoring display.
-The vehicles send the status of the connection - ping/heartbeat - one time per minute. If the heartbear was not received by the vehicle for more than 1 minute, it means no connection.
+The vehicles send the status of the connection - ping/heartbeat - one time per minute. If the heartbeat was not received by the vehicle for more than 1 minute, it means no connection.
 
 ## Requirements
 1. Web GUI (Single Page Application Framework/Platform).
@@ -147,7 +148,8 @@ This web application is the front-end part of the solution. [React JS](https://r
      - [ ] [SonarLint ](https://www.sonarlint.org/) is used to check the code quality locally. That is to make sure that local source code does not have any quality issues prior to committing/pushing to the SCM repository. 
      - [ ] [SonarCloud ](https://sonarcloud.io/) is used to check source code quality after it's pushed to remote SCM (Github).
      
-SonarCloud code quality analysis reports and statistics can be tracked using the below links:[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=alert_status)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=coverage)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=ncloc)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=security_rating)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=code_smells)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)
+SonarCloud code quality analysis reports and statistics can be tracked using the below links:
+>[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=alert_status)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=coverage)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=ncloc)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=security_rating)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=youssefhamza80_ConnectedVehicles&metric=code_smells)](https://sonarcloud.io/dashboard?id=youssefhamza80_ConnectedVehicles)
 
 
 - **Containerization**: [Docker ](https://www.docker.com/) is used to build and push services images to [Docker hub repository](https://hub.docker.com/) with each code push to github. This facilitates easy deployment on any machine that have Docker installed.
@@ -175,7 +177,8 @@ SonarCloud code quality analysis reports and statistics can be tracked using the
 	  - [ ] Invokes SonarCloud code quality checks and publish results to SonarCloud.
 	  - [ ] Buildes Docker images for all services and push them to docker hub remote repository.   
 
-    Lat build status can be tracked here: [![Build Status](https://travis-ci.com/youssefhamza80/ConnectedVehicles.svg?branch=main)](https://travis-ci.com/youssefhamza80/ConnectedVehicles)
+    Lat build status can be tracked here: 
+    >[![Build Status](https://travis-ci.com/youssefhamza80/ConnectedVehicles.svg?branch=main)](https://travis-ci.com/youssefhamza80/ConnectedVehicles)
    
 ## How To Build
 
@@ -225,9 +228,9 @@ To simulate vehicle status sending, you can place a ping request using vehicle I
 
 
 ## Deployment On Public Clouds
-It is highly recommended to deploy all services on public cloud to leverage to leverage the great scalability and availability provided by global privders such as Amazon AWS, Microsoft Azure, and Google Cloud Platform.
+It is highly recommended to deploy all services on public cloud to leverage the great scalability and availability provided by global privders such as Amazon AWS, Microsoft Azure, and Google Cloud Platform.
 
-As a proof of concept, I have deployed the configuration server as a dockarizedimage on AWS Elastic Beanstalk. With just simple parameters and configurations, application has been deployed successfully on the AWS cloud with many useful and powerful features, such as:
+As a proof of concept, I have deployed the configuration server as a dockarized image on AWS Elastic Beanstalk. With just simple parameters and configurations, application has been deployed successfully on the AWS cloud with many useful and powerful features, such as:
 - Load balancer "ELB" has been allocated automatically.
 - Auto scaling group has been defined automatically.
 - Security group has been defined automatically.

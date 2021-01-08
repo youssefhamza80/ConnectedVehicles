@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -294,7 +295,7 @@ class VehicleServiceTest {
 	void whenGetVehicleStatusExistingAndConnected_thenStatusIsOKAndStatusIsConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("CONNECTED", HttpStatus.OK);
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", LocalDateTime.now());
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", Instant.now());
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.of(existingVehicle));
 
@@ -328,7 +329,7 @@ class VehicleServiceTest {
 	void whenGetVehicleStatusOldPingDTM_thenStatusIsOKAndStringIsNotConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("NOT CONNECTED", HttpStatus.OK);
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", LocalDateTime.now().minusHours(2));
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", Instant.now().minusSeconds(2*60*60));
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.of(existingVehicle));
 
@@ -344,7 +345,7 @@ class VehicleServiceTest {
 	void whenGetVehicleStatusNonExisting_thenStatusIsOKAndStringIsNotConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("NOT CONNECTED", HttpStatus.OK);
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", LocalDateTime.now().minusHours(2));
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", Instant.now().minusSeconds(2*60*60));
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.empty());
 
@@ -364,7 +365,7 @@ class VehicleServiceTest {
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.of(existingVehicle));
 
-		when(vehicleRepository.save(existingVehicle)).thenReturn(new Vehicle(1, "VIN1", "REGNO1", LocalDateTime.now()));
+		when(vehicleRepository.save(existingVehicle)).thenReturn(new Vehicle(1, "VIN1", "REGNO1", Instant.now()));
 
 		ResponseEntity<Object> actualResponse = vehicleService.ping(existingVehicle.getVehicleId());
 

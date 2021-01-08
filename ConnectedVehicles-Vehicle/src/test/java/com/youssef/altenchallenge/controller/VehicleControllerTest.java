@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -205,7 +206,7 @@ public class VehicleControllerTest {
 
 	@Test
 	public void whenPingingExistingVehicleStatusIsOKAndUpdatedVehicleIsReturned() {
-		LocalDateTime updatedPingDtm = LocalDateTime.now();
+		Instant updatedPingDtm = Instant.now();
 		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "REGNO1", updatedPingDtm);
 		ResponseEntity<Object> responseEntity = new ResponseEntity<>(updatedVehicle, HttpStatus.OK);
 

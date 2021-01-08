@@ -1,6 +1,6 @@
 package com.youssef.altenchallenge.entity;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -23,7 +23,7 @@ public class Vehicle {
 
 	private String regNo;
 
-	private LocalDateTime pingDtm;
+	private Instant pingDtm;
 
 	@Transient
 	private String connectionStatus;
@@ -61,7 +61,7 @@ public class Vehicle {
 		this.regNo = regNo;
 	}
 
-	public Vehicle(long customerId, String vin, String regNo, LocalDateTime pingDtm) {
+	public Vehicle(long customerId, String vin, String regNo, Instant pingDtm) {
 		super();
 		this.customerId = customerId;
 		this.vehicleId = vin;
@@ -69,11 +69,11 @@ public class Vehicle {
 		setPingDtm(pingDtm);		
 	}
 
-	public LocalDateTime getPingDtm() {
+	public Instant getPingDtm() {
 		return pingDtm;
 	}
 
-	public void setPingDtm(LocalDateTime pingDtm) {
+	public void setPingDtm(Instant pingDtm) {
 		this.pingDtm = pingDtm;
 	}
 }
