@@ -127,7 +127,7 @@ This web application is the front-end part of the solution. [React JS](https://r
  
  You can run the application [here](http://localhost:3000/) assuming that all services are running on local host with default ports.
  
-***Note***: I've integrated the web app with only vehicle service. That's why only customer ID appear in the web app. Web app can be improvement further by integration with customer service to provide all customer details in the web page.
+***Note***: I've integrated the web app with only vehicle service. That's why only customer ID appears in the web app. Web app can be improved further by integrating with customer service to display all customer details in the web page.
  
 ## Used Technologies
 
