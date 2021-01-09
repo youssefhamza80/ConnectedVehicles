@@ -127,6 +127,8 @@ This web application is the front-end part of the solution. [React JS](https://r
  
  You can run the application [here](http://localhost:3000/) assuming that all services are running on local host with default ports.
  
+***Note***: I've integrated the web app with only vehicle service. That's why only customer ID appear in the web app. Web app can be improvement further by integration with customer service to provide all customer details in the web page.
+ 
 ## Used Technologies
 
  - **Development framework**: [Spring boot](https://spring.io/projects/spring-boot) is used for all backend services development. Spring Boot is a [Spring](https://spring.io/) module that is widely used to develop cloud-native applications/services. It's backed with various integration mechanisms with many cloud applications providers - such as [Netflix cloud framework](https://spring.io/projects/spring-cloud-netflix) -. 
@@ -230,19 +232,19 @@ I have used Google chrome for testing, if the monitoring application did not ref
 
 
 ## Deployment On Public Clouds
-It is highly recommended to deploy all services on public cloud to leverage great scalability and availability options provided by global providers such as Amazon AWS, Microsoft Azure, and Google Cloud Platform.
+It is highly recommended to deploy all services on public cloud to leverage great scalability and availability options provided by global public cloud providers such as Amazon AWS, Microsoft Azure, and Google Cloud Platform.
 
-As a proof of concept, I have deployed the configuration service as a dockerized image on AWS Elastic Beanstalk. With just simple parameters and configurations, application has been deployed successfully on the AWS cloud with many useful and powerful features, such as:
-- Load balancer "ELB" has been allocated automatically.
+As a proof of concept, I have deployed the configuration service as a dockerized image on AWS cloud with AWS Elastic Beanstalk. With just simple parameters and configurations, application has been deployed successfully on the AWS cloud with many useful and powerful features, such as:
+- Elastic Load Balancer "ELB" has been allocated automatically.
 - Auto scaling group has been defined automatically.
 - Security group has been defined automatically.
 - EC2 instance(s) are allocated automatically.
 
 ![enter image description here](https://github.com/youssefhamza80/ConnectedVehicles/blob/main/Diagrams/AWS%20Elastic%20Beanstalk.png?raw=true)
 
-I have shutdown the application on AWS so that I won't be charged. However, I can turn it on and send you the URL if needed.
+***Note***: I have shutdown the application on AWS so that I won't be charged. However, I can turn it on and send you the URL if needed.
 
-Of course, there are many other useful services on AWS and other public clouds that can fulfill this solution needs. For example, AWS Dynamo DB could be used instead of Mongo DB.
+Of course there are many other useful services on AWS and other public clouds that can fulfill this solution needs. For example, AWS Dynamo DB could be used instead of Mongo DB.
 Also, PING can be deployed as a separate service using AWS lambda server-less architecture. This could help in saving costs since billing will be based on number of calls instead of server up time.
 
 
