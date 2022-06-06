@@ -3,6 +3,9 @@ package com.youssef.connectedvehicles.service;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,18 +13,16 @@ import org.springframework.stereotype.Service;
 import com.youssef.connectedvehicles.entity.Customer;
 import com.youssef.connectedvehicles.repository.CustomerRepository;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Service
+@AllArgsConstructor
+@FieldDefaults(level = PRIVATE)
 public class CustomerService {
 
-	private final SequenceGeneratorService sequenceGeneratorService;
+	final SequenceGeneratorService sequenceGeneratorService;
 
-	private final CustomerRepository customerRepository;
-
-	public CustomerService(CustomerRepository customerRepository, SequenceGeneratorService sequenceGeneratorService) {
-		super();
-		this.sequenceGeneratorService = sequenceGeneratorService;
-		this.customerRepository = customerRepository;
-	}
+	final CustomerRepository customerRepository;
 
 	public ResponseEntity<List<Customer>> findAll() {
 		try {

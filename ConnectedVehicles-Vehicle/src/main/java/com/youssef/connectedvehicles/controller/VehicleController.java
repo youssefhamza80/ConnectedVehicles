@@ -2,6 +2,9 @@ package com.youssef.connectedvehicles.controller;
 
 import java.util.List;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,16 +22,15 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ApiOperation;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @RestController
+@AllArgsConstructor
+@FieldDefaults(level = PRIVATE)
 @Api(value = "Vehicle Controller APIs", tags = { "Vehicle Controller" })
 public class VehicleController {
 
-	private final VehicleService vehicleService;
-
-	public VehicleController(VehicleService vehicleService) {
-		super();
-		this.vehicleService = vehicleService;
-	}
+	final VehicleService vehicleService;
 
 	@ApiOperation(value = "Get all vehicles")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK"),

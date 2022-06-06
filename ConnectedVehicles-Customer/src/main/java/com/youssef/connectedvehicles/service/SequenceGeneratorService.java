@@ -6,6 +6,10 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.Objects;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
@@ -13,13 +17,12 @@ import org.springframework.stereotype.Service;
 import com.youssef.connectedvehicles.entity.DatabaseSequence;
 
 @Service
+@AllArgsConstructor
+@Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class SequenceGeneratorService {
 
-	private MongoOperations mongoOperations;
-
-	public SequenceGeneratorService(MongoOperations mongoOperations) {
-		this.mongoOperations = mongoOperations;
-	}
+	MongoOperations mongoOperations;
 
 	public long generateSequence(String seqName) {
 		DatabaseSequence counter = mongoOperations.findAndModify(
@@ -28,9 +31,5 @@ public class SequenceGeneratorService {
 				options().returnNew(true).upsert(true), 
 				DatabaseSequence.class);
 		return !Objects.isNull(counter) ? counter.getSeq() : 1;
-	}
-
-	public void setMongoOperations(MongoOperations mongoOperations) {
-		this.mongoOperations = mongoOperations;		
 	}
 }

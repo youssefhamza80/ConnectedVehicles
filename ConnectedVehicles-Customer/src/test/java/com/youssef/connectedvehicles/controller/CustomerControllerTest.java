@@ -43,9 +43,6 @@ public class CustomerControllerTest {
 	@MockBean
 	CustomerService customerService;
 
-	@MockBean
-	CustomerRepository customerRepository;
-
 	@PostConstruct
 	public void init() {
 		uri = "http://localhost:" + port;

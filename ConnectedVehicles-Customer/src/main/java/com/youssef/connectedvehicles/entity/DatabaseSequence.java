@@ -1,39 +1,23 @@
 package com.youssef.connectedvehicles.entity;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Document(collection = "database_sequences")
+@Data
+@AllArgsConstructor
+@FieldDefaults(level = PRIVATE)
 public class DatabaseSequence {
 
     @Id
-    private String id;
+    String id;
 
-    private long seq;
+    long seq;
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public long getSeq() {
-		return seq;
-	}
-
-	public void setSeq(long seq) {
-		this.seq = seq;
-	}
-
-	public DatabaseSequence(String id, long seq) {
-		super();
-		setId(id);
-		setSeq(seq);
-	}
-
-	public DatabaseSequence() {
-		super();
-	}
 }

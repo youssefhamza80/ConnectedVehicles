@@ -49,10 +49,9 @@ class VehicleServiceTest {
 	@Test
 	void whenCallingGetAllVehicles_thenReturnAllVehicles() {
 
-		List<Vehicle> expectedVehicles = new ArrayList<>();
-
-		expectedVehicles.add(new Vehicle(1, "VIN1", "REGNO1", null));
-		expectedVehicles.add(new Vehicle(2, "VIN2", "REGNO2", null));
+		List<Vehicle> expectedVehicles = List.of(
+				new Vehicle(1, "VIN1", "REGNO1"),
+				new Vehicle(2, "VIN2", "REGNO2"));
 
 		ResponseEntity<List<Vehicle>> expectedResponse = new ResponseEntity<>(expectedVehicles, HttpStatus.OK);
 
@@ -60,13 +59,15 @@ class VehicleServiceTest {
 
 		ResponseEntity<List<Vehicle>> actualResponse = vehicleService.findAll();
 
-		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
+		assertAll(
+				() -> assertNotNull(actualResponse),
+				() -> assertNotNull(actualResponse.getBody()),
 				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
 	}
 
 	@Test
 	void whenAddingNewVehicleToExistingCustomer_thenStatusIsCreatedAndVehicleObjectIsReturned() {
-		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
+		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1");
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(newVehicle, HttpStatus.CREATED);
 
@@ -81,7 +82,8 @@ class VehicleServiceTest {
 
 		ResponseEntity<Object> actualResponse = vehicleService.insertNewVehicle(newVehicle);
 
-		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
+		assertAll(
+				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
 				() -> assertNotNull(actualResponse.getBody()),
 				() -> assertTrue(actualResponse.getBody() instanceof Vehicle),
 				() -> assertEquals(newVehicle.getCustomerId(), ((Vehicle) actualResponse.getBody()).getCustomerId()),
@@ -94,14 +96,15 @@ class VehicleServiceTest {
 	void whenAddingNewVehicleToNonExistingCustomer_thenStatusIsBadRequestAndErrorMessageIsThere() {
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>("Customer id: 100 does not exist",
 				HttpStatus.BAD_REQUEST);
-		Vehicle newVehicle = new Vehicle(100, "VIN1", "REGNO1", null);
+		Vehicle newVehicle = new Vehicle(100, "VIN1", "REGNO1");
 
 		ResponseEntity<Customer> notFoundCustomerResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		when(customerClient.findCustomer(100)).thenReturn(notFoundCustomerResponse);
 
 		ResponseEntity<Object> actualResponse = vehicleService.insertNewVehicle(newVehicle);
 
-		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
+		assertAll(
+				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
 				() -> assertNotNull(actualResponse.getBody()),
 				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
 
@@ -109,7 +112,8 @@ class VehicleServiceTest {
 
 		ResponseEntity<Object> actualResponse2 = vehicleService.insertNewVehicle(newVehicle);
 
-		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse2.getStatusCode()),
+		assertAll(
+				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse2.getStatusCode()),
 				() -> assertNotNull(actualResponse2.getBody()),
 				() -> assertEquals(expectedResponse.getBody(), actualResponse2.getBody()));
 	};
@@ -120,20 +124,21 @@ class VehicleServiceTest {
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>("Error while retrieving customer data.",
 				HttpStatus.INTERNAL_SERVER_ERROR);
 
-		Vehicle newVehicle = new Vehicle(100, "VIN1", "REGNO1", null);
+		Vehicle newVehicle = new Vehicle(100, "VIN1", "REGNO1");
 
 		when(customerClient.findCustomer(newVehicle.getCustomerId())).thenThrow(FeignException.class);
 
 		ResponseEntity<Object> actualResponse = vehicleService.insertNewVehicle(newVehicle);
 
-		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
+		assertAll(
+				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
 				() -> assertNotNull(actualResponse.getBody()), () -> assertTrue(
 						actualResponse.getBody().toString().startsWith(expectedResponse.getBody().toString())));
 	};
 
 	@Test
 	void whenAddingNewVehicleRepositoryException_thenStatusIsInternalServerError() {
-		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
+		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1");
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(newVehicle,
 				HttpStatus.INTERNAL_SERVER_ERROR);
@@ -155,7 +160,7 @@ class VehicleServiceTest {
 	@Test
 	void whenAddingDuplicatedVehicle_thenStatusIsBadRequest() {
 
-		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
+		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1");
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(
 				String.format("Vehicle with VIN '%s' already exists", newVehicle.getVehicleId()),
@@ -167,7 +172,7 @@ class VehicleServiceTest {
 		when(customerClient.findCustomer(1)).thenReturn(customerClientResponse);
 
 		when(vehicleRepository.findById(newVehicle.getVehicleId())).thenReturn(Optional
-				.of(new Vehicle(newVehicle.getCustomerId(), newVehicle.getVehicleId(), newVehicle.getRegNo(), null)));
+				.of(new Vehicle(newVehicle.getCustomerId(), newVehicle.getVehicleId(), newVehicle.getRegNo())));
 
 		ResponseEntity<Object> actualResponse = vehicleService.insertNewVehicle(newVehicle);
 
@@ -180,12 +185,12 @@ class VehicleServiceTest {
 	@Test
 	void whenUpdatingExistingVehicleStatusIsOK() {
 
-		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG", null);
+		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG");
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(updatedVehicle, HttpStatus.OK);
 
 		when(vehicleRepository.findById(updatedVehicle.getVehicleId()))
-				.thenReturn(Optional.of(new Vehicle(1, "VIN1", "OLD REG", null)));
+				.thenReturn(Optional.of(new Vehicle(1, "VIN1", "OLD REG")));
 
 		ResponseEntity<Customer> customerClientResponse = new ResponseEntity<Customer>(
 				new Customer(1, "Youssef", "Doha Qatar"), HttpStatus.OK);
@@ -209,13 +214,13 @@ class VehicleServiceTest {
 	@Test
 	void whenUpdatingVehicleRepositoryException_thenStatusIsInternalServerError() {
 
-		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG", null);
+		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG");
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(updatedVehicle,
 				HttpStatus.INTERNAL_SERVER_ERROR);
 
 		when(vehicleRepository.findById(updatedVehicle.getVehicleId()))
-				.thenReturn(Optional.of(new Vehicle(1, "VIN1", "OLD REG", null)));
+				.thenReturn(Optional.of(new Vehicle(1, "VIN1", "OLD REG")));
 
 		ResponseEntity<Customer> customerClientResponse = new ResponseEntity<Customer>(
 				new Customer(1, "Youssef", "Doha Qatar"), HttpStatus.OK);
@@ -231,7 +236,7 @@ class VehicleServiceTest {
 
 	@Test
 	void whenUpdatingNonExistingVehicle_thenStatusIsNotFound() {
-		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG", null);
+		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG");
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		when(vehicleRepository.findById(updatedVehicle.getVehicleId())).thenReturn(Optional.empty());
 		ResponseEntity<Customer> customerClientResponse = new ResponseEntity<Customer>(
@@ -248,12 +253,12 @@ class VehicleServiceTest {
 
 	@Test
 	void whenDeletingExistingVehicle_thenStatusIsOK() {
-		Vehicle vehicleToDelete = new Vehicle(1, "VIN1", "UPDATED REG", null);
+		Vehicle vehicleToDelete = new Vehicle(1, "VIN1", "UPDATED REG");
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.OK);
 
 		when(vehicleRepository.findById(vehicleToDelete.getVehicleId()))
 				.thenReturn(Optional.of(new Vehicle(vehicleToDelete.getCustomerId(), vehicleToDelete.getVehicleId(),
-						vehicleToDelete.getRegNo(), null)));
+						vehicleToDelete.getRegNo())));
 
 		ResponseEntity<String> actualResponse = vehicleService.deleteVehicle(vehicleToDelete.getVehicleId());
 
@@ -263,7 +268,7 @@ class VehicleServiceTest {
 
 	@Test
 	void whenDeletingNonExistingVehicle_thenStatusIsNotFound() {
-		Vehicle vehicleToDelete = new Vehicle(1, "VIN1", "UPDATED REG", null);
+		Vehicle vehicleToDelete = new Vehicle(1, "VIN1", "UPDATED REG");
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
 		when(vehicleRepository.findById(vehicleToDelete.getVehicleId())).thenReturn(Optional.empty());
@@ -276,7 +281,7 @@ class VehicleServiceTest {
 
 	@Test
 	void whenDeleteVehicleRepositoryException_thenStatusIsInternalServerError() {
-		Vehicle vehicleToDelete = new Vehicle(1, "VIN1", "UPDATED REG", null);
+		Vehicle vehicleToDelete = new Vehicle(1, "VIN1", "UPDATED REG");
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
 		when(vehicleRepository.findById(vehicleToDelete.getVehicleId())).thenReturn(Optional.of(vehicleToDelete));
@@ -294,7 +299,8 @@ class VehicleServiceTest {
 	void whenGetVehicleStatusExistingAndConnected_thenStatusIsOKAndStatusIsConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("CONNECTED", HttpStatus.OK);
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", Instant.now());
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1");
+		existingVehicle.setPingDtm(Instant.now());
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.of(existingVehicle));
 
@@ -312,7 +318,7 @@ class VehicleServiceTest {
 	void whenGetVehicleStatusNullPingDTM_thenStatusIsOKAndStringIsNotConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("NOT CONNECTED", HttpStatus.OK);
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1");
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.of(existingVehicle));
 
@@ -328,7 +334,8 @@ class VehicleServiceTest {
 	void whenGetVehicleStatusOldPingDTM_thenStatusIsOKAndStringIsNotConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("NOT CONNECTED", HttpStatus.OK);
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", Instant.now().minusSeconds(2*60*60));
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1");
+		existingVehicle.setPingDtm(Instant.now().minusSeconds(2*60*60));
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.of(existingVehicle));
 
@@ -344,7 +351,8 @@ class VehicleServiceTest {
 	void whenGetVehicleStatusNonExisting_thenStatusIsOKAndStringIsNotConnected() {
 		ResponseEntity<String> expectedResponse = new ResponseEntity<String>("NOT CONNECTED", HttpStatus.OK);
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", Instant.now().minusSeconds(2*60*60));
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1");
+		existingVehicle.setPingDtm(Instant.now().minusSeconds(2*60*60));
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.empty());
 
@@ -358,13 +366,15 @@ class VehicleServiceTest {
 
 	@Test
 	void whenPingExistingVehicleStatusIsOKAndUpdatedVehicleIsReturned() {
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1");
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(existingVehicle, HttpStatus.OK);
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.of(existingVehicle));
 
-		when(vehicleRepository.save(existingVehicle)).thenReturn(new Vehicle(1, "VIN1", "REGNO1", Instant.now()));
+		Vehicle expectedVehicle = new Vehicle(1, "VIN1", "REGNO1");
+		expectedVehicle.setPingDtm(Instant.now());
+		when(vehicleRepository.save(existingVehicle)).thenReturn(expectedVehicle);
 
 		ResponseEntity<Object> actualResponse = vehicleService.ping(existingVehicle.getVehicleId());
 
@@ -384,7 +394,7 @@ class VehicleServiceTest {
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1", null);
+		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1");
 
 		when(vehicleRepository.findById(existingVehicle.getVehicleId())).thenReturn(Optional.of(existingVehicle));
 
