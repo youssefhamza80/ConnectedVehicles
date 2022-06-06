@@ -4,36 +4,36 @@
        	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.youssef.altenchallenge</groupId>
+		<groupId>com.youssef.connectedvehicles</groupId>
 		<artifactId>connectedvehicles-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>ConnectedVehicles-jacoco-reports</artifactId>
 	<name>ConnectedVehicles-Jacoco-reports</name>
-	<description>Coverage Reports for ConnectedVehicles Alten Challenge</description>
+	<description>Coverage Reports for ConnectedVehicles Project</description>
 	<dependencies>
 		<dependency>
-			<groupId>com.youssef.altenchallenge</groupId>
+			<groupId>com.youssef.connectedvehicles</groupId>
 			<artifactId>ConnectedVehicles-Discovery</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.youssef.altenchallenge</groupId>
+			<groupId>com.youssef.connectedvehicles</groupId>
 			<artifactId>ConnectedVehicles-ConfigServer</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.youssef.altenchallenge</groupId>
+			<groupId>com.youssef.connectedvehicles</groupId>
 			<artifactId>ConnectedVehicles-APIGateway</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.youssef.altenchallenge</groupId>
+			<groupId>com.youssef.connectedvehicles</groupId>
 			<artifactId>ConnectedVehicles-Customer</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.youssef.altenchallenge</groupId>
+			<groupId>com.youssef.connectedvehicles</groupId>
 			<artifactId>ConnectedVehicles-Vehicle</artifactId>
 			<version>${project.version}</version>
 		</dependency>
