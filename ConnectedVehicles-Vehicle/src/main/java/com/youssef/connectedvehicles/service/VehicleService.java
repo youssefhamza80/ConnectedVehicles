@@ -96,7 +96,7 @@ public class VehicleService {
 
     public ResponseEntity<Object> ping(String vehicleId) {
         try {
-            Vehicle vehicle = null;
+            Vehicle vehicle;
             ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicleId);
             if (existingVehicle.getStatusCode() == OK) {
                 vehicle = existingVehicle.getBody();

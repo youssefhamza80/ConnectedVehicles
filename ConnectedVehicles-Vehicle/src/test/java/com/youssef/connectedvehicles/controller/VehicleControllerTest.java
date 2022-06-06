@@ -63,8 +63,8 @@ public class VehicleControllerTest {
 	public void whenCallingGetAllVehicles_thenCorrect() {
 
 		List<Vehicle> vehicles = List.of(
-				new Vehicle(1, "VIN1", "REGNO1"),
-				new Vehicle(2, "VIN2", "REGNO2"));
+				new Vehicle(1L, "VIN1", "REGNO1"),
+				new Vehicle(2L, "VIN2", "REGNO2"));
 
 		when(vehicleService.findAll()).thenReturn(new ResponseEntity<>(vehicles, HttpStatus.OK));
 
@@ -74,7 +74,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenFindingExistingVehicleStatusIsOKAndBodyIsCorrect() {
 
-		Vehicle existingVehicle = new Vehicle(1, "VIN1", "REGNO1");
+		Vehicle existingVehicle = new Vehicle(1L, "VIN1", "REGNO1");
 
 		ResponseEntity<Vehicle> expectedResponse = new ResponseEntity<>(existingVehicle, HttpStatus.OK);
 
@@ -82,16 +82,16 @@ public class VehicleControllerTest {
 
 		get(uri + "/" + existingVehicle.getVehicleId()).then().statusCode(HttpStatus.OK.value()).assertThat()
 				.body("regNo", equalTo(existingVehicle.getRegNo()))
-				.body("customerId", equalTo((int)existingVehicle.getCustomerId()))
+				.body("customerId", equalTo(existingVehicle.getCustomerId()))
 				.body("vehicleId", equalTo(existingVehicle.getVehicleId()));
-	};
+	}
 
 	@Test
 	public void whenAddingNewVehicleToExistingCustomer_thenStatusIsCreatedAndBodyIsCorrect() {
 
-		Vehicle newVehicle = new Vehicle(1, "VIN1", "REGNO1");
-		ResponseEntity<Object> responseEntity = new ResponseEntity<Object>(newVehicle, HttpStatus.CREATED);
-		when(vehicleService.insertNewVehicle((Vehicle) any(Vehicle.class))).thenReturn(responseEntity);
+		Vehicle newVehicle = new Vehicle(1L, "VIN1", "REGNO1");
+		ResponseEntity<Object> responseEntity = new ResponseEntity<>(newVehicle, HttpStatus.CREATED);
+		when(vehicleService.insertNewVehicle(any(Vehicle.class))).thenReturn(responseEntity);
 
 		Map<String, String> request = new HashMap<>();
 		request.put("customerId", "1");
@@ -105,13 +105,13 @@ public class VehicleControllerTest {
 		assertAll(() -> assertNotNull(retrievedVehicle),
 				() -> assertEquals(retrievedVehicle.getVehicleId(), newVehicle.getVehicleId()),
 				() -> assertEquals(retrievedVehicle.getRegNo(), newVehicle.getRegNo()));
-	};
+	}
 
 	@Test
 	public void whenAddingNewVehicleToNonExistingCustomer_thenStatusIsCreatedAndBodyIsCorrect() {
-		ResponseEntity<Object> responseEntity = new ResponseEntity<Object>("Customer id: 100 does not exist",
+		ResponseEntity<Object> responseEntity = new ResponseEntity<>("Customer id: 100 does not exist",
 				HttpStatus.BAD_REQUEST);
-		when(vehicleService.insertNewVehicle((Vehicle) any(Vehicle.class))).thenReturn(responseEntity);
+		when(vehicleService.insertNewVehicle(any(Vehicle.class))).thenReturn(responseEntity);
 
 		Map<String, String> request = new HashMap<>();
 		request.put("customerId", "100");
@@ -120,11 +120,11 @@ public class VehicleControllerTest {
 
 		given().contentType("application/json").body(request).when().post(uri).then()
 				.statusCode(HttpStatus.BAD_REQUEST.value()).body(equalTo("Customer id: 100 does not exist"));
-	};
+	}
 
 	@Test
 	public void whenAddingDuplicatedVehicle_thenStatusIsBadRequest() {
-		ResponseEntity<Object> responseEntity = new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		ResponseEntity<Object> responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		when(vehicleService.insertNewVehicle(any(Vehicle.class))).thenReturn(responseEntity);
 		Map<String, String> request = new HashMap<>();
 		request.put("customerId", "1");
@@ -138,7 +138,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenUpdatingExistingVehicleStatusIsOK() {
 
-		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG");
+		Vehicle updatedVehicle = new Vehicle(1L, "VIN1", "UPDATED REG");
 		ResponseEntity<Object> responseEntity = new ResponseEntity<>(updatedVehicle, HttpStatus.OK);
 
 		when(vehicleService.updateVehicle(any(Vehicle.class))).thenReturn(responseEntity);
@@ -171,7 +171,7 @@ public class VehicleControllerTest {
 
 	@Test
 	public void whenDeletingExistingVehicle_thenStatusIsOK() {
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+		ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.OK);
 		when(vehicleService.deleteVehicle("VIN1")).thenReturn(responseEntity);
 
 		delete(uri + "/VIN1").then().statusCode(HttpStatus.OK.value());
@@ -179,7 +179,7 @@ public class VehicleControllerTest {
 
 	@Test
 	public void whenDeletingNonExistingVehicle_thenStatusIsNotFound() {
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		when(vehicleService.deleteVehicle("VIN1")).thenReturn(responseEntity);
 
 		delete(uri + "/VIN1").then().statusCode(HttpStatus.NOT_FOUND.value());
@@ -187,7 +187,7 @@ public class VehicleControllerTest {
 
 	@Test
 	public void whenGetExistingConnectedVehicleStatus_thenStatusIsOKAndStatusIsConnected() {
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>("CONNECTED", HttpStatus.OK);
+		ResponseEntity<String> responseEntity = new ResponseEntity<>("CONNECTED", HttpStatus.OK);
 		when(vehicleService.getVehicleConnectionStatus(any())).thenReturn(responseEntity);
 
 		get(uri + "/connectionstatus/VIN1").then().statusCode(HttpStatus.OK.value()).body(equalTo("CONNECTED"));
@@ -195,7 +195,7 @@ public class VehicleControllerTest {
 
 	@Test
 	public void whenGetNotConnectedVehicleStatus_thenStatusIsOKAndStatusIsNotConnected() {
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>("NOT CONNECTED", HttpStatus.OK);
+		ResponseEntity<String> responseEntity = new ResponseEntity<>("NOT CONNECTED", HttpStatus.OK);
 		when(vehicleService.getVehicleConnectionStatus("VIN1")).thenReturn(responseEntity);
 
 		get(uri + "/connectionstatus/VIN1").then().statusCode(HttpStatus.OK.value()).body(equalTo("NOT CONNECTED"));
@@ -204,7 +204,7 @@ public class VehicleControllerTest {
 	@Test
 	public void whenPingingExistingVehicleStatusIsOKAndUpdatedVehicleIsReturned() {
 		Instant updatedPingDtm = Instant.now();
-		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "REGNO1");
+		Vehicle updatedVehicle = new Vehicle(1L, "VIN1", "REGNO1");
 		updatedVehicle.setPingDtm(updatedPingDtm);
 		ResponseEntity<Object> responseEntity = new ResponseEntity<>(updatedVehicle, HttpStatus.OK);
 

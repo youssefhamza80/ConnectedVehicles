@@ -64,9 +64,8 @@ public class CustomerControllerTest {
 	@Test
 	public void whenFindingExistingCustomer_thenStatusIsOKAndBodyIsCorrect() {
 
-		List<Customer> customers = new ArrayList<>();
 		Customer existingCustomer = new Customer(1, "Youssef", "Doha Qatar");
-		customers.add(existingCustomer);
+
 		ResponseEntity<Customer> expectedResponse = new ResponseEntity<>(existingCustomer, HttpStatus.OK);
 
 		when(customerService.findById(existingCustomer.getId())).thenReturn(expectedResponse);
@@ -78,13 +77,13 @@ public class CustomerControllerTest {
 				() -> assertEquals(existingCustomer.getId(), retrievedCustomer.getId()),
 				() -> assertEquals(existingCustomer.getName(), retrievedCustomer.getName()),
 				() -> assertEquals(existingCustomer.getAddress(), retrievedCustomer.getAddress()));
-	};
+	}
 
 	@Test
 	public void whenAddingNewCustomer_thenStatusIsCreatedAndBodyIsCorrect() {
 		Customer newCustomer = new Customer(1, "Youssef", "Doha Qatar");
-		ResponseEntity<Object> responseEntity = new ResponseEntity<Object>(newCustomer, HttpStatus.CREATED);
-		when(customerService.insertNewCustomer((Customer) any(Customer.class))).thenReturn(responseEntity);
+		ResponseEntity<Object> responseEntity = new ResponseEntity<>(newCustomer, HttpStatus.CREATED);
+		when(customerService.insertNewCustomer(any(Customer.class))).thenReturn(responseEntity);
 
 		Map<String, String> request = new HashMap<>();
 		request.put("name", "Youssef");
@@ -97,12 +96,12 @@ public class CustomerControllerTest {
 				() -> assertEquals(retrievedCustomer.getId(), newCustomer.getId()),
 				() -> assertEquals(retrievedCustomer.getName(), newCustomer.getName()),
 				() -> assertEquals(retrievedCustomer.getAddress(), newCustomer.getAddress()));
-	};
+	}
 
 	@Test
 	public void whenAddingDuplicatedCustomer_thenStatusIsBadRequest() {
 
-		ResponseEntity<Object> responseEntity = new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		ResponseEntity<Object> responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		when(customerService.insertNewCustomer(any(Customer.class))).thenReturn(responseEntity);
 		Map<String, String> request = new HashMap<>();
 		request.put("name", "Youssef");
@@ -138,7 +137,7 @@ public class CustomerControllerTest {
 	@Test
 	public void whenDeletingExistingCustomer_thenStatusIsOK() {
 
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.OK);
+		ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.OK);
 		when(customerService.deleteCustomer(1)).thenReturn(responseEntity);
 
 		delete(uri + "/1").then().statusCode(HttpStatus.OK.value());
@@ -146,7 +145,7 @@ public class CustomerControllerTest {
 
 	@Test
 	public void whenDeletingNonExistingCustomer_thenStatusIsNotFound() {
-		ResponseEntity<String> responseEntity = new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		when(customerService.deleteCustomer(1)).thenReturn(responseEntity);
 
 		delete(uri + "/1").then().statusCode(HttpStatus.NOT_FOUND.value());

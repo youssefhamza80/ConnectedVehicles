@@ -20,7 +20,7 @@ public class Vehicle {
 	public static final String SEQUENCE_NAME = "vehicles_sequence";
 
 	@NonNull
-	long customerId;
+	Long customerId;
 
 	@Id
 	@NonNull

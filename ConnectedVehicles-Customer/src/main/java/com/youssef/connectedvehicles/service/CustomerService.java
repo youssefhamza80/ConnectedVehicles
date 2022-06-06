@@ -35,11 +35,9 @@ public class CustomerService {
 	public ResponseEntity<Customer> findById(long id) {
 		Optional<Customer> customer = customerRepository.findById(id);
 
-		if (customer.isPresent()) {
-			return new ResponseEntity<>(customer.get(), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		return customer
+				.map(foundCustomer -> ResponseEntity.ok(foundCustomer))
+				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
 	public ResponseEntity<Customer> findByName(String name) {

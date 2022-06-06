@@ -13,7 +13,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class Customer {
 
 	@NonNull
-	long id;
+	Long id;
 
 	@NonNull
 	String name;
