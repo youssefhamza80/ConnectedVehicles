@@ -20,7 +20,7 @@
 		</sonar.coverage.jacoco.xmlReportPaths>    
 	</properties>
 	
-	<groupId>com.youssef.altenchallenge</groupId>
+	<groupId>com.youssef.connectedvehicles</groupId>
 	<artifactId>connectedvehicles-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>

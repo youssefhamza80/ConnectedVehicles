@@ -4,13 +4,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.youssef.altenchallenge</groupId>
+		<groupId>com.youssef.connectedvehicles</groupId>
 		<artifactId>connectedvehicles-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>ConnectedVehicles-Customer</artifactId>
 	<name>ConnectedVehicles-Customer</name>
-	<description>Customer Service for ConnectedVehicles Alten Challenge</description>
+	<description>Customer Service for ConnectedVehicles Project</description>
 
 	<properties>
 		<java.version>11</java.version>
