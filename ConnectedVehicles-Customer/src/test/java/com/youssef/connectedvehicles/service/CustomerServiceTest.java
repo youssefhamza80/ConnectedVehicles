@@ -1,16 +1,8 @@
 package com.youssef.connectedvehicles.service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import com.youssef.connectedvehicles.entity.Customer;
+import com.youssef.connectedvehicles.repository.CustomerRepository;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +11,21 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.youssef.connectedvehicles.entity.Customer;
-import com.youssef.connectedvehicles.repository.CustomerRepository;
+import java.util.List;
+import java.util.Optional;
+
+import static lombok.AccessLevel.PRIVATE;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@FieldDefaults(level = PRIVATE)
 class CustomerServiceTest {
 
 	@MockBean
@@ -38,20 +39,16 @@ class CustomerServiceTest {
 
 	@Test
 	void whenCallingGetAllCustomers_thenReturnAllCustomers() {
-		List<Customer> expectedCustomers = new ArrayList<>();
-
-		ResponseEntity<List<Customer>> expectedResponse = new ResponseEntity<>(expectedCustomers, HttpStatus.OK);
-
-		expectedCustomers.add(new Customer(1, "Youssef", "Doha Qatar"));
-		expectedCustomers.add(new Customer(2, "Daniel", "Gothenberg Sweden"));
+		List<Customer> expectedCustomers = List.of(
+				new Customer(1, "Youssef", "Doha Qatar"),
+				new Customer(2, "Daniel", "Berlin Germany")
+		);
 
 		when(customerRepository.findAll()).thenReturn(expectedCustomers);
 
-		ResponseEntity<List<Customer>> actualResponse = customerService.findAll();
+		List<Customer> actualCustomers = customerService.findAll();
 
-		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
-				() -> assertEquals(2, actualResponse.getBody().size()),
-				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
+		assertEquals(expectedCustomers, actualCustomers);
 	}
 
 	@Test
@@ -59,95 +56,51 @@ class CustomerServiceTest {
 
 		Customer newCustomer = new Customer(0, "Youssef", "Doha Qatar");
 
-		Customer returnedCustomer = new Customer(1, "Youssef", "Doha Qatar");
+		Customer expectedNewCustomer = new Customer(1, "Youssef", "Doha Qatar");
 
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(newCustomer, HttpStatus.CREATED);
+		when(customerRepository.save(newCustomer)).thenReturn(expectedNewCustomer);
 
-		when(customerRepository.findByName(newCustomer.getName())).thenReturn(new ArrayList<Customer>());
+		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1);
 
-		when(customerRepository.save(newCustomer)).thenReturn(returnedCustomer);
+		Customer actualReturnedCustomer = customerService.insertNewCustomer(newCustomer);
 
-		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1L);
+		assertEquals(expectedNewCustomer, actualReturnedCustomer);
 
-		ResponseEntity<Object> actualResponse = customerService.insertNewCustomer(newCustomer);
-
-		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
-				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
-				() -> assertTrue(actualResponse.getBody() instanceof Customer),
-				() -> assertEquals(1L, ((Customer) actualResponse.getBody()).getId()),
-				() -> assertEquals(((Customer) expectedResponse.getBody()).getName(),
-						((Customer) actualResponse.getBody()).getName()),
-				() -> assertEquals(((Customer) expectedResponse.getBody()).getName(),
-						((Customer) actualResponse.getBody()).getName()));
-	};
+	}
 
 	@Test
 	void whenAddingNewCustomerAndInternalExceptionThrown_thenStatusIsInternalServerError() {
 
 		Customer newCustomer = new Customer(0, "Youssef", "Doha Qatar");
 
-		Customer returnedCustomer = new Customer(1, "Youssef", "Doha Qatar");
+		Customer expectedCustomer = new Customer(1, "Youssef", "Doha Qatar");
 
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
 		when(customerRepository.findByName(newCustomer.getName()))
 				.thenThrow(new RuntimeException("Cannot retrieve customer data from DB"));
 
-		when(customerRepository.save(newCustomer)).thenReturn(returnedCustomer);
+		when(customerRepository.save(newCustomer)).thenReturn(expectedCustomer);
 
-		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1L);
+		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1);
 
-		ResponseEntity<Object> actualResponse = customerService.insertNewCustomer(newCustomer);
+		Customer actualReturnedCustomer = customerService.insertNewCustomer(newCustomer);
 
-		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
-				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()));
-	};
-
-	@Test
-	void whenAddingDuplicatedCustomer_thenStatusIsBadRequest() {
-
-		List<Customer> existingCustomers = new ArrayList<>();
-
-		existingCustomers.add(new Customer(1, "Youssef", "Doha Qatar"));
-
-		Customer newCustomer = new Customer(0, "Youssef", "Doha Qatar");
-
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(
-				String.format("Customer '%s' already exists", newCustomer.getName()), HttpStatus.BAD_REQUEST);
-
-		when(customerRepository.findByName(newCustomer.getName())).thenReturn(existingCustomers);
-
-		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(2L);
-
-		ResponseEntity<Object> actualResponse = customerService.insertNewCustomer(newCustomer);
-
-		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
-				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
-				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
+		assertEquals(expectedCustomer, actualReturnedCustomer);
 	}
 
 	@Test
 	void whenUpdatingExistingCustomer_thenStatusIsOK() {
 		Customer existingCustomer = new Customer(1, "Youssef", "Doha Qatar");
-		Customer updatedCustomer = new Customer(1, "Youssef Hamza", "Doha Qatar");
-
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(updatedCustomer, HttpStatus.OK);
+		Customer expectedUpdatedCustomer = new Customer(1, "Youssef Hamza", "Doha Qatar");
 
 		when(customerRepository.findById(existingCustomer.getId())).thenReturn(Optional.of(existingCustomer));
 
-		when(customerRepository.save(updatedCustomer)).thenReturn(updatedCustomer);
+		when(customerRepository.save(expectedUpdatedCustomer)).thenReturn(expectedUpdatedCustomer);
 
-		ResponseEntity<Object> actualResponse = customerService.updateCustomer(updatedCustomer);
+		Customer actualUpdatedCustomer = customerService.updateCustomer(expectedUpdatedCustomer);
 
-		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
-				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
-				() -> assertTrue(actualResponse.getBody() instanceof Customer),
-				() -> assertEquals(((Customer) expectedResponse.getBody()).getId(),
-						((Customer) actualResponse.getBody()).getId()),
-				() -> assertEquals(((Customer) expectedResponse.getBody()).getName(),
-						((Customer) actualResponse.getBody()).getName()),
-				() -> assertEquals(((Customer) expectedResponse.getBody()).getName(),
-						((Customer) actualResponse.getBody()).getName()));
+		assertEquals(expectedUpdatedCustomer, actualUpdatedCustomer);
 	}
 
 	@Test
@@ -155,16 +108,14 @@ class CustomerServiceTest {
 		Customer existingCustomer = new Customer(1, "Youssef", "Doha Qatar");
 		Customer updatedCustomer = new Customer(1, "Youssef Hamza", "Doha Qatar");
 
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
 		when(customerRepository.findById(existingCustomer.getId())).thenReturn(Optional.of(existingCustomer));
 		when(customerRepository.save(updatedCustomer))
 				.thenThrow(new RuntimeException("Exception while updating customer instance"));
 
-		ResponseEntity<Object> actualResponse = customerService.updateCustomer(updatedCustomer);
+		ResponseStatusException thrownException = assertThrows(ResponseStatusException.class, ()-> customerService.updateCustomer(updatedCustomer));
 
-		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
-				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()));
+		assertEquals(INTERNAL_SERVER_ERROR, thrownException.getStatus());
+
 	}
 
 	@Test
@@ -172,16 +123,11 @@ class CustomerServiceTest {
 
 		Customer customerToUpdate = new Customer(1, "Youssef Hamza", "Doha Qatar");
 
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(
-				String.format("Customer '%d' is not found", customerToUpdate.getId()), HttpStatus.NOT_FOUND);
-
 		when(customerRepository.findById(customerToUpdate.getId())).thenReturn(Optional.empty());
 
-		ResponseEntity<Object> actualResponse = customerService.updateCustomer(customerToUpdate);
+		ResponseStatusException thrownException = assertThrows(ResponseStatusException.class, ()->customerService.updateCustomer(customerToUpdate));
 
-		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
-				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
-				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
+		assertEquals(NOT_FOUND, thrownException.getStatus());
 	}
 
 	@Test
@@ -193,10 +139,7 @@ class CustomerServiceTest {
 
 		when(customerRepository.findById(existingCustomer.getId())).thenReturn(Optional.of(existingCustomer));
 
-		ResponseEntity<String> actualResponse = customerService.deleteCustomer(existingCustomer.getId());
-
-		assertAll(() -> assertNotNull(actualResponse), () -> assertNull(actualResponse.getBody()),
-				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()));
+		assertDoesNotThrow(()->customerService.deleteCustomer(existingCustomer.getId()));
 
 	}
 
@@ -209,25 +152,22 @@ class CustomerServiceTest {
 
 		when(customerRepository.findById(existingCustomer.getId())).thenReturn(Optional.empty());
 
-		ResponseEntity<String> actualResponse = customerService.deleteCustomer(existingCustomer.getId());
 
-		assertAll(() -> assertNotNull(actualResponse),
-				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
-				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
+		ResponseStatusException thrownException = assertThrows(ResponseStatusException.class, ()->customerService.deleteCustomer(existingCustomer.getId()));
+
+		assertEquals(NOT_FOUND, thrownException.getStatus());
 	}
 
 	@Test
 	void whenCustomerRepositoryDeleteException_thenStatusIsInternalServerError() {
 		Customer existingCustomer = new Customer(1, "Youssef", "Doha Qatar");
 
-		ResponseEntity<String> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		when(customerRepository.findById(existingCustomer.getId())).thenReturn(Optional.of(existingCustomer));
 
-		when(customerRepository.findById(existingCustomer.getId()))
-				.thenThrow(new RuntimeException("Exception while retrieving data from repository"));
+		doThrow(RuntimeException.class).when(customerRepository).deleteById(existingCustomer.getId());
 
-		ResponseEntity<String> actualResponse = customerService.deleteCustomer(existingCustomer.getId());
+		ResponseStatusException thrownException = assertThrows(ResponseStatusException.class, ()->customerService.deleteCustomer(existingCustomer.getId()));
 
-		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
-				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()));
+		assertEquals(INTERNAL_SERVER_ERROR, thrownException.getStatus());
 	}
 }

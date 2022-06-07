@@ -1,53 +1,27 @@
 package com.youssef.connectedvehicles.entity;
 
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Document(collection = "Customers")
+@Data
+@FieldDefaults(level = PRIVATE)
+@AllArgsConstructor
 public class Customer {
 	
 	@Transient
     public static final String SEQUENCE_NAME = "customers_sequence";
 
 	@Id
-	private long id;
+	Integer id;
 
-	private String name;
+	String name;
 
-	private String address;
+	String address;
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public Customer() {
-		super();
-	}
-
-	public Customer(long id, String name, String address) {
-		this.id = id;
-		this.name = name;
-		this.address = address;
-	}
 }

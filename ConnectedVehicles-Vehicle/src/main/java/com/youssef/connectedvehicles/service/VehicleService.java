@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,23 +18,18 @@ import com.youssef.connectedvehicles.entity.Vehicle;
 import com.youssef.connectedvehicles.repository.VehicleRepository;
 
 import feign.FeignException;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class VehicleService {
 
-	private final ConfigProperties configProperties;
+	ConfigProperties configProperties;
 
-	private final VehicleRepository vehicleRepository;
+	VehicleRepository vehicleRepository;
 
-	private final CustomerClient customerClient;
-
-	public VehicleService(VehicleRepository vehicleRepository, CustomerClient customerClient,
-			ConfigProperties configProperties) {
-		super();
-		this.vehicleRepository = vehicleRepository;
-		this.customerClient = customerClient;
-		this.configProperties = configProperties;
-	}
+	CustomerClient customerClient;
 
 	private void setVehicleConnectionStatus(Vehicle vehicle) {
 		if (vehicle.getPingDtm() != null
@@ -79,26 +77,26 @@ public class VehicleService {
 			}
 
 			// Check if customer exists
-			ResponseEntity<Customer> foundCustomer = customerClient.findCustomer(vehicle.getCustomerId());
+			Customer foundCustomer = customerClient.findCustomer(vehicle.getCustomerId());
 
-			if (foundCustomer == null || foundCustomer.getStatusCode() != HttpStatus.OK) {
-				return new ResponseEntity<>(String.format("Customer id: %d does not exist", vehicle.getCustomerId()),
-						HttpStatus.BAD_REQUEST);
-			}
 			vehicle = vehicleRepository.save(vehicle);
 			setVehicleConnectionStatus(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
 		} catch (FeignException feignEx) {
 			return new ResponseEntity<>("Error while retrieving customer data." + feignEx.getMessage(),
 					HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception ex) {
+		}
+		catch(ResponseStatusException ex){
+			throw ex;
+		}
+		catch (Exception ex) {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	public ResponseEntity<Object> ping(String vehicleId) {
 		try {
-			Vehicle vehicle = null;
+			Vehicle vehicle;
 			ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicleId);
 			if (existingVehicle.getStatusCode() == HttpStatus.OK) {
 				vehicle = existingVehicle.getBody();
