@@ -286,8 +286,9 @@ class VehicleServiceTest {
 
 		ResponseEntity<String> actualResponse = vehicleService.deleteVehicle(vehicleToDelete.getVehicleId());
 
-		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
-				() -> assertNotNull(actualResponse.getBody()));
+		assertAll(
+				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
+				() -> assertNull(actualResponse.getBody()));
 	}
 
 	@Test
