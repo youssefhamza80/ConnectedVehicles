@@ -1,22 +1,16 @@
 package com.youssef.connectedvehicles.configuration;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @ConfigurationProperties(prefix = "vehicle")
+@AllArgsConstructor
+@Data
+@FieldDefaults(level = PRIVATE)
 public class ConfigProperties {
-
-	private long connectionTimeoutMinutes;
-
-	public long getConnectionTimeoutMinutes() {
-		return connectionTimeoutMinutes;
-	}
-
-	public void setConnectionTimeoutMinutes(long connectionTimeoutMinutes) {
-		this.connectionTimeoutMinutes = connectionTimeoutMinutes;
-	}
-
-	public ConfigProperties() {
-		super();
-		connectionTimeoutMinutes = 1;
-	}	
+	int connectionTimeoutMinutes;
 }

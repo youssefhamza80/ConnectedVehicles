@@ -1,5 +1,6 @@
 package com.youssef.connectedvehicles.service;
 
+import static lombok.AccessLevel.PRIVATE;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -9,8 +10,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,7 @@ import com.youssef.connectedvehicles.repository.CustomerRepository;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@FieldDefaults(level = PRIVATE)
 class CustomerServiceTest {
 
 	@MockBean
@@ -50,7 +55,7 @@ class CustomerServiceTest {
 		ResponseEntity<List<Customer>> actualResponse = customerService.findAll();
 
 		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
-				() -> assertEquals(2, actualResponse.getBody().size()),
+				() -> assertEquals(2, Objects.requireNonNull(actualResponse.getBody()).size()),
 				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
 	}
 
@@ -61,25 +66,25 @@ class CustomerServiceTest {
 
 		Customer returnedCustomer = new Customer(1, "Youssef", "Doha Qatar");
 
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(newCustomer, HttpStatus.CREATED);
+		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(newCustomer, HttpStatus.CREATED);
 
-		when(customerRepository.findByName(newCustomer.getName())).thenReturn(new ArrayList<Customer>());
+		when(customerRepository.findByName(newCustomer.getName())).thenReturn(new ArrayList<>());
 
 		when(customerRepository.save(newCustomer)).thenReturn(returnedCustomer);
 
-		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1L);
+		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1);
 
 		ResponseEntity<Object> actualResponse = customerService.insertNewCustomer(newCustomer);
 
 		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
 				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
 				() -> assertTrue(actualResponse.getBody() instanceof Customer),
-				() -> assertEquals(1L, ((Customer) actualResponse.getBody()).getId()),
-				() -> assertEquals(((Customer) expectedResponse.getBody()).getName(),
-						((Customer) actualResponse.getBody()).getName()),
-				() -> assertEquals(((Customer) expectedResponse.getBody()).getName(),
-						((Customer) actualResponse.getBody()).getName()));
-	};
+				() -> assertEquals(1, ((Customer) Objects.requireNonNull(actualResponse.getBody())).getId()),
+				() -> assertEquals(((Customer) Objects.requireNonNull(expectedResponse.getBody())).getName(),
+						((Customer) Objects.requireNonNull(actualResponse.getBody())).getName()),
+				() -> assertEquals(((Customer) Objects.requireNonNull(expectedResponse.getBody())).getName(),
+						((Customer) Objects.requireNonNull(actualResponse.getBody())).getName()));
+	}
 
 	@Test
 	void whenAddingNewCustomerAndInternalExceptionThrown_thenStatusIsInternalServerError() {
@@ -88,20 +93,20 @@ class CustomerServiceTest {
 
 		Customer returnedCustomer = new Customer(1, "Youssef", "Doha Qatar");
 
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
 		when(customerRepository.findByName(newCustomer.getName()))
 				.thenThrow(new RuntimeException("Cannot retrieve customer data from DB"));
 
 		when(customerRepository.save(newCustomer)).thenReturn(returnedCustomer);
 
-		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1L);
+		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1);
 
 		ResponseEntity<Object> actualResponse = customerService.insertNewCustomer(newCustomer);
 
 		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
 				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()));
-	};
+	}
 
 	@Test
 	void whenAddingDuplicatedCustomer_thenStatusIsBadRequest() {
@@ -112,12 +117,12 @@ class CustomerServiceTest {
 
 		Customer newCustomer = new Customer(0, "Youssef", "Doha Qatar");
 
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<Object>(
+		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(
 				String.format("Customer '%s' already exists", newCustomer.getName()), HttpStatus.BAD_REQUEST);
 
 		when(customerRepository.findByName(newCustomer.getName())).thenReturn(existingCustomers);
 
-		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(2L);
+		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(2);
 
 		ResponseEntity<Object> actualResponse = customerService.insertNewCustomer(newCustomer);
 
@@ -142,12 +147,12 @@ class CustomerServiceTest {
 		assertAll(() -> assertNotNull(actualResponse), () -> assertNotNull(actualResponse.getBody()),
 				() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
 				() -> assertTrue(actualResponse.getBody() instanceof Customer),
-				() -> assertEquals(((Customer) expectedResponse.getBody()).getId(),
-						((Customer) actualResponse.getBody()).getId()),
-				() -> assertEquals(((Customer) expectedResponse.getBody()).getName(),
-						((Customer) actualResponse.getBody()).getName()),
-				() -> assertEquals(((Customer) expectedResponse.getBody()).getName(),
-						((Customer) actualResponse.getBody()).getName()));
+				() -> assertEquals(((Customer) Objects.requireNonNull(expectedResponse.getBody())).getId(),
+						((Customer) Objects.requireNonNull(actualResponse.getBody())).getId()),
+				() -> assertEquals(((Customer) Objects.requireNonNull(expectedResponse.getBody())).getName(),
+						((Customer) Objects.requireNonNull(actualResponse.getBody())).getName()),
+				() -> assertEquals(((Customer) Objects.requireNonNull(expectedResponse.getBody())).getName(),
+						((Customer) Objects.requireNonNull(actualResponse.getBody())).getName()));
 	}
 
 	@Test

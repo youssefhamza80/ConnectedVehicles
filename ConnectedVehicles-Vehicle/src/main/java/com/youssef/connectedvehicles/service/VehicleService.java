@@ -4,6 +4,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,21 +20,15 @@ import com.youssef.connectedvehicles.repository.VehicleRepository;
 import feign.FeignException;
 
 @Service
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class VehicleService {
 
-	private final ConfigProperties configProperties;
+	ConfigProperties configProperties;
 
-	private final VehicleRepository vehicleRepository;
+	VehicleRepository vehicleRepository;
 
-	private final CustomerClient customerClient;
-
-	public VehicleService(VehicleRepository vehicleRepository, CustomerClient customerClient,
-			ConfigProperties configProperties) {
-		super();
-		this.vehicleRepository = vehicleRepository;
-		this.customerClient = customerClient;
-		this.configProperties = configProperties;
-	}
+	CustomerClient customerClient;
 
 	private void setVehicleConnectionStatus(Vehicle vehicle) {
 		if (vehicle.getPingDtm() != null
@@ -98,7 +95,7 @@ public class VehicleService {
 
 	public ResponseEntity<Object> ping(String vehicleId) {
 		try {
-			Vehicle vehicle = null;
+			Vehicle vehicle;
 			ResponseEntity<Vehicle> existingVehicle = findByVehicleId(vehicleId);
 			if (existingVehicle.getStatusCode() == HttpStatus.OK) {
 				vehicle = existingVehicle.getBody();

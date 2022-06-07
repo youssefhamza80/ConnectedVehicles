@@ -1,11 +1,14 @@
 package com.youssef.connectedvehicles.service;
 
+import static lombok.AccessLevel.PRIVATE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import javax.annotation.PostConstruct;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -21,6 +24,7 @@ import com.youssef.connectedvehicles.entity.DatabaseSequence;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
+@FieldDefaults(level = PRIVATE)
 class SequenceGeneratorServiceTest {
 
 	MongoOperations mongoOperationMock;
@@ -38,7 +42,7 @@ class SequenceGeneratorServiceTest {
 	void testGenerateNewSequenceExistingCounter() {
 		String sequenceName = "DUMMY_SEQUENCE";
 
-		long expectedValue = 3;
+		int expectedValue = 3;
 
 		when(mongoOperationMock.findAndModify(any(Query.class), any(UpdateDefinition.class),
 				any(FindAndModifyOptions.class), any())).thenReturn(new DatabaseSequence(sequenceName, expectedValue));

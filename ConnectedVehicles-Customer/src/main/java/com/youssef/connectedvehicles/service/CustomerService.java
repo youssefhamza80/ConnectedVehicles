@@ -3,6 +3,9 @@ package com.youssef.connectedvehicles.service;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -10,18 +13,16 @@ import org.springframework.stereotype.Service;
 import com.youssef.connectedvehicles.entity.Customer;
 import com.youssef.connectedvehicles.repository.CustomerRepository;
 
+import static lombok.AccessLevel.PRIVATE;
+
 @Service
+@AllArgsConstructor
+@FieldDefaults(level = PRIVATE, makeFinal = true)
 public class CustomerService {
 
-	private final SequenceGeneratorService sequenceGeneratorService;
+	SequenceGeneratorService sequenceGeneratorService;
 
-	private final CustomerRepository customerRepository;
-
-	public CustomerService(CustomerRepository customerRepository, SequenceGeneratorService sequenceGeneratorService) {
-		super();
-		this.sequenceGeneratorService = sequenceGeneratorService;
-		this.customerRepository = customerRepository;
-	}
+	CustomerRepository customerRepository;
 
 	public ResponseEntity<List<Customer>> findAll() {
 		try {
@@ -31,14 +32,10 @@ public class CustomerService {
 		}
 	}
 
-	public ResponseEntity<Customer> findById(long id) {
+	public ResponseEntity<Customer> findById(int id) {
 		Optional<Customer> customer = customerRepository.findById(id);
 
-		if (customer.isPresent()) {
-			return new ResponseEntity<>(customer.get(), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		return customer.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
 	public ResponseEntity<Customer> findByName(String name) {
@@ -79,7 +76,7 @@ public class CustomerService {
 		}
 	}
 
-	public ResponseEntity<String> deleteCustomer(long customerId) {
+	public ResponseEntity<String> deleteCustomer(int customerId) {
 		try {
 			ResponseEntity<Customer> existingCustomer = findById(customerId);
 			if (existingCustomer.getStatusCode() != HttpStatus.OK) {
