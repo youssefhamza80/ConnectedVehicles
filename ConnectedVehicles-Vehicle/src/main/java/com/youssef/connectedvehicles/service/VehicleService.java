@@ -18,6 +18,7 @@ import com.youssef.connectedvehicles.entity.Vehicle;
 import com.youssef.connectedvehicles.repository.VehicleRepository;
 
 import feign.FeignException;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @AllArgsConstructor
@@ -76,19 +77,19 @@ public class VehicleService {
 			}
 
 			// Check if customer exists
-			ResponseEntity<Customer> foundCustomer = customerClient.findCustomer(vehicle.getCustomerId());
+			Customer foundCustomer = customerClient.findCustomer(vehicle.getCustomerId());
 
-			if (foundCustomer == null || foundCustomer.getStatusCode() != HttpStatus.OK) {
-				return new ResponseEntity<>(String.format("Customer id: %d does not exist", vehicle.getCustomerId()),
-						HttpStatus.BAD_REQUEST);
-			}
 			vehicle = vehicleRepository.save(vehicle);
 			setVehicleConnectionStatus(vehicle);
 			return new ResponseEntity<>(vehicle, HttpStatus.CREATED);
 		} catch (FeignException feignEx) {
 			return new ResponseEntity<>("Error while retrieving customer data." + feignEx.getMessage(),
 					HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception ex) {
+		}
+		catch(ResponseStatusException ex){
+			throw ex;
+		}
+		catch (Exception ex) {
 			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

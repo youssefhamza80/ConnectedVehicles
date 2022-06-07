@@ -10,5 +10,5 @@ import com.youssef.connectedvehicles.entity.Customer;
 @FeignClient(name = "CONNECTED-VEHICLES-CUSTOMER")
 public interface CustomerClient {
 	@GetMapping("/{id}")
-	public ResponseEntity<Customer> findCustomer(@PathVariable long id);
+	Customer findCustomer(@PathVariable long id);
 }

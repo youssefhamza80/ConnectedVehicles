@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import com.youssef.connectedvehicles.entity.Vehicle;
 import com.youssef.connectedvehicles.repository.VehicleRepository;
 
 import feign.FeignException;
+import org.springframework.web.server.ResponseStatusException;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -71,8 +73,8 @@ class VehicleServiceTest {
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(newVehicle, HttpStatus.CREATED);
 
-		ResponseEntity<Customer> customerClientResponse = new ResponseEntity<>(
-				new Customer(1, "Youssef", "Doha Qatar"), HttpStatus.OK);
+		Customer customerClientResponse =
+				new Customer(1, "Youssef", "Doha Qatar");
 
 		when(customerClient.findCustomer(1)).thenReturn(customerClientResponse);
 
@@ -90,31 +92,6 @@ class VehicleServiceTest {
 				() -> assertEquals(newVehicle.getRegNo(), ((Vehicle) Objects.requireNonNull(actualResponse.getBody())).getRegNo()),
 				() -> assertEquals(newVehicle.getVehicleId(), ((Vehicle) Objects.requireNonNull(actualResponse.getBody())).getVehicleId()));
 	}
-
-	@Test
-	void whenAddingNewVehicleToNonExistingCustomer_thenStatusIsBadRequestAndErrorMessageIsThere() {
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<>("Customer id: 100 does not exist",
-				HttpStatus.BAD_REQUEST);
-		Vehicle newVehicle = new Vehicle(100, "VIN1", "REGNO1");
-
-		ResponseEntity<Customer> notFoundCustomerResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		when(customerClient.findCustomer(100)).thenReturn(notFoundCustomerResponse);
-
-		ResponseEntity<Object> actualResponse = vehicleService.insertNewVehicle(newVehicle);
-
-		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode()),
-				() -> assertNotNull(actualResponse.getBody()),
-				() -> assertEquals(expectedResponse.getBody(), actualResponse.getBody()));
-
-		when(customerClient.findCustomer(100)).thenReturn(null);
-
-		ResponseEntity<Object> actualResponse2 = vehicleService.insertNewVehicle(newVehicle);
-
-		assertAll(() -> assertEquals(expectedResponse.getStatusCode(), actualResponse2.getStatusCode()),
-				() -> assertNotNull(actualResponse2.getBody()),
-				() -> assertEquals(expectedResponse.getBody(), actualResponse2.getBody()));
-	}
-
 	@Test
 	void whenAddingNewVehicleAndCustomerClientExceptionIsRaised_thenStatusIsInternalServerErrorAndProperErrorMessageIsThere() {
 
@@ -139,8 +116,8 @@ class VehicleServiceTest {
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(newVehicle,
 				HttpStatus.INTERNAL_SERVER_ERROR);
 
-		ResponseEntity<Customer> customerClientResponse = new ResponseEntity<>(
-				new Customer(1, "Youssef", "Doha Qatar"), HttpStatus.OK);
+		Customer customerClientResponse =
+				new Customer(1, "Youssef", "Doha Qatar");
 
 		when(customerClient.findCustomer(1)).thenReturn(customerClientResponse);
 
@@ -162,8 +139,8 @@ class VehicleServiceTest {
 				String.format("Vehicle with VIN '%s' already exists", newVehicle.getVehicleId()),
 				HttpStatus.BAD_REQUEST);
 
-		ResponseEntity<Customer> customerClientResponse = new ResponseEntity<>(
-				new Customer(1, "Youssef", "Doha Qatar"), HttpStatus.OK);
+		Customer customerClientResponse =
+				new Customer(1, "Youssef", "Doha Qatar");
 
 		when(customerClient.findCustomer(1)).thenReturn(customerClientResponse);
 
@@ -188,8 +165,8 @@ class VehicleServiceTest {
 		when(vehicleRepository.findById(updatedVehicle.getVehicleId()))
 				.thenReturn(Optional.of(new Vehicle(1, "VIN1", "OLD REG")));
 
-		ResponseEntity<Customer> customerClientResponse = new ResponseEntity<>(
-				new Customer(1, "Youssef", "Doha Qatar"), HttpStatus.OK);
+		Customer customerClientResponse =
+				new Customer(1, "Youssef", "Doha Qatar");
 
 		when(customerClient.findCustomer(1)).thenReturn(customerClientResponse);
 
@@ -218,8 +195,8 @@ class VehicleServiceTest {
 		when(vehicleRepository.findById(updatedVehicle.getVehicleId()))
 				.thenReturn(Optional.of(new Vehicle(1, "VIN1", "OLD REG")));
 
-		ResponseEntity<Customer> customerClientResponse = new ResponseEntity<>(
-				new Customer(1, "Youssef", "Doha Qatar"), HttpStatus.OK);
+		Customer customerClientResponse =
+				new Customer(1, "Youssef", "Doha Qatar");
 
 		when(customerClient.findCustomer(1)).thenReturn(customerClientResponse);
 
@@ -233,10 +210,10 @@ class VehicleServiceTest {
 	@Test
 	void whenUpdatingNonExistingVehicle_thenStatusIsNotFound() {
 		Vehicle updatedVehicle = new Vehicle(1, "VIN1", "UPDATED REG");
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(NOT_FOUND);
 		when(vehicleRepository.findById(updatedVehicle.getVehicleId())).thenReturn(Optional.empty());
-		ResponseEntity<Customer> customerClientResponse = new ResponseEntity<>(
-				new Customer(1, "Youssef", "Doha Qatar"), HttpStatus.OK);
+		Customer customerClientResponse =
+				new Customer(1, "Youssef", "Doha Qatar");
 
 		when(customerClient.findCustomer(1)).thenReturn(customerClientResponse);
 
@@ -265,7 +242,7 @@ class VehicleServiceTest {
 	@Test
 	void whenDeletingNonExistingVehicle_thenStatusIsNotFound() {
 		Vehicle vehicleToDelete = new Vehicle(1, "VIN1", "UPDATED REG");
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(NOT_FOUND);
 
 		when(vehicleRepository.findById(vehicleToDelete.getVehicleId())).thenReturn(Optional.empty());
 
@@ -406,7 +383,7 @@ class VehicleServiceTest {
 	@Test
 	void whenPingNonExistingVehicleStatusIsNotFound() {
 
-		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(NOT_FOUND);
 
 		when(vehicleRepository.findById("VIN1")).thenReturn(Optional.empty());
 
