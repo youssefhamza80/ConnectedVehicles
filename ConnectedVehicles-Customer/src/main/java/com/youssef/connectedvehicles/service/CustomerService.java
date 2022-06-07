@@ -1,17 +1,15 @@
 package com.youssef.connectedvehicles.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import lombok.AccessLevel;
+import com.youssef.connectedvehicles.entity.Customer;
+import com.youssef.connectedvehicles.repository.CustomerRepository;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.youssef.connectedvehicles.entity.Customer;
-import com.youssef.connectedvehicles.repository.CustomerRepository;
+import java.util.List;
+import java.util.Optional;
 
 import static lombok.AccessLevel.PRIVATE;
 
@@ -24,69 +22,44 @@ public class CustomerService {
 
 	CustomerRepository customerRepository;
 
-	public ResponseEntity<List<Customer>> findAll() {
+	public List<Customer> findAll() {
 		try {
-			return new ResponseEntity<>(customerRepository.findAll(), HttpStatus.OK);
+			return customerRepository.findAll();
 		} catch (Exception ex) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
 	}
 
-	public ResponseEntity<Customer> findById(int id) {
+	public Customer findById(int id) {
 		Optional<Customer> customer = customerRepository.findById(id);
 
-		return customer.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+		return customer.orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
 	}
 
-	public ResponseEntity<Customer> findByName(String name) {
-		List<Customer> customers = customerRepository.findByName(name);
-		if (!customers.isEmpty()) {
-			return new ResponseEntity<>(customers.get(0), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
-	}
-
-	public ResponseEntity<Object> insertNewCustomer(Customer customer) {
+	public Customer insertNewCustomer(Customer customer) {
 		try {
-			ResponseEntity<Customer> existingCustomer = findByName(customer.getName());
-			if (existingCustomer.getStatusCode() == HttpStatus.OK) {
-				return new ResponseEntity<>(String.format("Customer '%s' already exists", customer.getName()),
-						HttpStatus.BAD_REQUEST);
-			}
 			customer.setId(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME));
-			customer = customerRepository.save(customer);
-			return new ResponseEntity<>(customer, HttpStatus.CREATED);
+			return customerRepository.save(customer);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
 	}
 
-	public ResponseEntity<Object> updateCustomer(Customer customer) {
+	public Customer updateCustomer(Customer customer) {
+		Customer existingCustomer = findById(customer.getId());
 		try {
-			ResponseEntity<Customer> existingCustomer = findById(customer.getId());
-			if (existingCustomer.getStatusCode() != HttpStatus.OK) {
-				return new ResponseEntity<>(String.format("Customer '%d' is not found", customer.getId()),
-						HttpStatus.NOT_FOUND);
-			}
-			customer = customerRepository.save(customer);
-			return new ResponseEntity<>(customer, HttpStatus.OK);
+			return customerRepository.save(customer);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
 	}
 
-	public ResponseEntity<String> deleteCustomer(int customerId) {
+	public void deleteCustomer(int customerId) {
+		Customer existingCustomer = findById(customerId);
 		try {
-			ResponseEntity<Customer> existingCustomer = findById(customerId);
-			if (existingCustomer.getStatusCode() != HttpStatus.OK) {
-				return new ResponseEntity<>(String.format("Customer '%d' is not found", customerId),
-						HttpStatus.NOT_FOUND);
-			}
 			customerRepository.deleteById(customerId);
-			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception ex) {
-			return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
 	}
 }

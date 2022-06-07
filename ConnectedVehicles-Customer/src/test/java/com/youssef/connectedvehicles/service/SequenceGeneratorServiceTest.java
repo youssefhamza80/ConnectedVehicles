@@ -1,13 +1,6 @@
 package com.youssef.connectedvehicles.service;
 
-import static lombok.AccessLevel.PRIVATE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import javax.annotation.PostConstruct;
-
-import lombok.AccessLevel;
+import com.youssef.connectedvehicles.entity.DatabaseSequence;
 import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +13,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.UpdateDefinition;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.youssef.connectedvehicles.entity.DatabaseSequence;
+import javax.annotation.PostConstruct;
+
+import static lombok.AccessLevel.PRIVATE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)

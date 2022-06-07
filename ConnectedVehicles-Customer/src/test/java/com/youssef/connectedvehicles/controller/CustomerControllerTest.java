@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import lombok.experimental.FieldDefaults;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,6 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.youssef.connectedvehicles.entity.Customer;
 import com.youssef.connectedvehicles.repository.CustomerRepository;
 import com.youssef.connectedvehicles.service.CustomerService;
+import org.springframework.web.server.ResponseStatusException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -57,12 +59,11 @@ public class CustomerControllerTest {
 	@Test
 	public void whenCallingGetAllCustomers_thenCorrect() {
 
-		List<Customer> customers = new ArrayList<>();
-		ResponseEntity<List<Customer>> expectedResponse = new ResponseEntity<>(customers, HttpStatus.OK);
-		customers.add(new Customer(1, "Youssef", "Doha Qatar"));
-		customers.add(new Customer(2, "Daniel", "Berlin Germany"));
+		List<Customer> existingCustomers = List.of(
+				new Customer(1, "Youssef", "Doha Qatar"),
+				new Customer(2, "Daniel", "Berlin Germany"));
 
-		when(customerService.findAll()).thenReturn(expectedResponse);
+		when(customerService.findAll()).thenReturn(existingCustomers);
 
 		get(uri).then().statusCode(HttpStatus.OK.value()).assertThat().body("size()", is(2));
 	}
@@ -71,9 +72,8 @@ public class CustomerControllerTest {
 	public void whenFindingExistingCustomer_thenStatusIsOKAndBodyIsCorrect() {
 
 		Customer existingCustomer = new Customer(1, "Youssef", "Doha Qatar");
-		ResponseEntity<Customer> expectedResponse = new ResponseEntity<>(existingCustomer, HttpStatus.OK);
 
-		when(customerService.findById(existingCustomer.getId())).thenReturn(expectedResponse);
+		when(customerService.findById(existingCustomer.getId())).thenReturn(existingCustomer);
 
 		Customer retrievedCustomer = get(uri + "/1").then().statusCode(HttpStatus.OK.value()).extract()
 				.as(Customer.class);
@@ -87,14 +87,9 @@ public class CustomerControllerTest {
 	@Test
 	public void whenAddingNewCustomer_thenStatusIsCreatedAndBodyIsCorrect() {
 		Customer newCustomer = new Customer(1, "Youssef", "Doha Qatar");
-		ResponseEntity<Object> responseEntity = new ResponseEntity<>(newCustomer, HttpStatus.CREATED);
-		when(customerService.insertNewCustomer(any(Customer.class))).thenReturn(responseEntity);
+		when(customerService.insertNewCustomer(any(Customer.class))).thenReturn(newCustomer);
 
-		Map<String, String> request = new HashMap<>();
-		request.put("name", "Youssef");
-		request.put("address", "Doha Qatar");
-
-		Customer retrievedCustomer = given().contentType("application/json").body(request).when().post(uri).then()
+		Customer retrievedCustomer = given().contentType("application/json").body(newCustomer).when().post(uri).then()
 				.statusCode(HttpStatus.CREATED.value()).extract().as(Customer.class);
 
 		assertAll(() -> assertNotNull(retrievedCustomer),
@@ -104,50 +99,37 @@ public class CustomerControllerTest {
 	}
 
 	@Test
-	public void whenAddingDuplicatedCustomer_thenStatusIsBadRequest() {
-
-		ResponseEntity<Object> responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		when(customerService.insertNewCustomer(any(Customer.class))).thenReturn(responseEntity);
-		Map<String, String> request = new HashMap<>();
-		request.put("name", "Youssef");
-		request.put("address", "Doha Qatar");
-
-		given().contentType("application/json").body(request).when().post(uri).then()
-				.statusCode(HttpStatus.BAD_REQUEST.value());
-	}
-
-	@Test
 	public void whenUpdatingExistingCustomer_thenStatusIsOK() {
-		ResponseEntity<Object> responseEntity = new ResponseEntity<>(HttpStatus.OK);
-		when(customerService.updateCustomer(any(Customer.class))).thenReturn(responseEntity);
-		Map<String, String> request = Map.of("name", "Youssef", "address", "Doha Qatar");
+		Customer existingCustomer = new Customer(1, "Youssef", "Germany");
+		when(customerService.updateCustomer(any(Customer.class))).thenReturn(existingCustomer);
 
-		given().contentType("application/json").body(request).when().put(uri).then().statusCode(HttpStatus.OK.value());
+		given().contentType("application/json").body(existingCustomer).when().put(uri).then().statusCode(HttpStatus.OK.value());
 	}
 
 	@Test
 	public void whenUpdatingNonExistingCustomer_thenStatusIsNotFound() {
-		ResponseEntity<Object> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		when(customerService.updateCustomer(any(Customer.class))).thenReturn(responseEntity);
-		Map<String, String> request = Map.of("name", "Youssef", "address", "Doha Qatar");
 
-		given().contentType("application/json").body(request).when().put(uri).then()
+		Customer customerToUpdate = new Customer(1, "Youssef", "Germany");
+
+		when(customerService.updateCustomer(customerToUpdate)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+		given().contentType("application/json").body(customerToUpdate).when().put(uri).then()
 				.statusCode(HttpStatus.NOT_FOUND.value());
 	}
 
 	@Test
 	public void whenDeletingExistingCustomer_thenStatusIsOK() {
+		Customer existingCustomer = new Customer(1, "Youssef", "Germany");
 
-		ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.OK);
-		when(customerService.deleteCustomer(1)).thenReturn(responseEntity);
+		when(customerService.findById(1)).thenReturn(existingCustomer);
 
 		delete(uri + "/1").then().statusCode(HttpStatus.OK.value());
 	}
 
 	@Test
 	public void whenDeletingNonExistingCustomer_thenStatusIsNotFound() {
-		ResponseEntity<String> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		when(customerService.deleteCustomer(1)).thenReturn(responseEntity);
+
+		Mockito.doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND)).when(customerService).deleteCustomer(1);
 
 		delete(uri + "/1").then().statusCode(HttpStatus.NOT_FOUND.value());
 	}
