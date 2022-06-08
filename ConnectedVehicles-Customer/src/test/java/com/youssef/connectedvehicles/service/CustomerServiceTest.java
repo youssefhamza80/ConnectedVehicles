@@ -77,9 +77,6 @@ class CustomerServiceTest {
 
 		ResponseEntity<Object> expectedResponse = new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 
-		when(customerRepository.findByName(newCustomer.getName()))
-				.thenThrow(new RuntimeException("Cannot retrieve customer data from DB"));
-
 		when(customerRepository.save(newCustomer)).thenReturn(expectedCustomer);
 
 		when(sequenceGeneratorService.generateSequence(Customer.SEQUENCE_NAME)).thenReturn(1);

@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -68,6 +69,14 @@ public class CustomerControllerTest {
 		get(uri).then().statusCode(HttpStatus.OK.value()).assertThat().body("size()", is(2));
 	}
 
+
+	@Test
+	public void whenCallingGetAllCustomersThrowsException_thenStatusCodeIsNotOk() {
+
+		when(customerService.findAll()).thenThrow(new ResponseStatusException(INTERNAL_SERVER_ERROR));
+
+		get(uri).then().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
 	@Test
 	public void whenFindingExistingCustomer_thenStatusIsOKAndBodyIsCorrect() {
 
