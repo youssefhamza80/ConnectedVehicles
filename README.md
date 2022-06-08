@@ -154,7 +154,7 @@ SonarCloud last build code quality analysis reports and statistics can be tracke
 	  - [ ] Builds Docker images for all services and push them to docker hub remote repository.   
 
     Lat build status can be tracked here: 
-    >[![Build Status](https://travis-ci.com/youssefhamza80/ConnectedVehicles.svg?branch=main)](https://travis-ci.com/youssefhamza80/ConnectedVehicles)
+    >[![Build Status](https://travis-ci.com/youssefhamza80/ConnectedVehicles.svg?branch=main)](https://app.travis-ci.com/github/youssefhamza80/ConnectedVehicles)
    
 ## How To Build
 
